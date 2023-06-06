@@ -1,0 +1,1818 @@
+					BUỔI 1
+
+Độ phức tạp thuật toán
+
+Thuật toán là gì ? 
+
+Input đầu vào ----> Thuật toán ----> Output đầu ra thỏa mãn
+
+Thuật toán là cách suy nghĩ để giải quyết một vấn đề nào đó sao cho output thỏa mãn input đầu vào.
+
+*****Độ phức tạp thuật toán là gì ? 
+
+Độ phức tạp thuật toán là một đại lượng nhằm mục đích so sánh độ hiệu quả giữa 2 thuật toán với nhau. 
+
+Một máy tình (bình thường) trong 1 giây có thể xử lý ~ 10^8 phép tính 
+
+Một thuật toán được gọi là "tốt" nếu có thể đưa ra được kết quả trong một thời gian cho phép. 
+
+Một số độ phức tạp căn bản
+
+     + Độ phức tạp hằng số: O(1)
+
+Đây là độ phức tạp khi ta xử lý những bài toàn chỉ thực thi trong một vài phép tính 
+
+Ví dụ: Kiểm tra số N có phải số chẵn hay lẻ ?
+Kiểm tra 3 số nguyên đầu vào có phải là độ dài 3 cạnh tam giác ?
+
+     + Độ phức tạp tuyến tính: O(N)
+
+Đây là độ phức tạp khi ta thực hiện 1 hoặc nhiều vòng for tuyến tính rời rạc nhau
+
+ví dụ: tính tổng các phần tử trong mảng a gồm N phần tử?
+		đọc số N
+		for i: 1 -> N
+		đọc a[i]
+		for i: 1 -> N
+		sum += a[i]
+ví dụ: tính tổng các số trong dãy a gồm N phần tử và các số trong dãy b gòm M phần tử ?
+	đọc số N, M
+	for i: 1 -> N
+	   đọc a[i]
+	for i: 1 -> M
+           đọc b[i]
+	for i: 1 -> N
+	   suma = suma + a[i]
+	for i: 1 -> M
+           sumb = sumb + b[i]
+O(N + M)
+
+      + Độ phức tạp đa thức: O(N^c)
+
+Đây là độ phức tạp gồm nhiều vòng lặp tuyến tình lồng nhau
+ví dụ: 
+	for i: 1 -> N
+	   for j: 1 -> N
+		nếu a[i] + a[j] == K
+		  xuất (i,j)
+
+Với mỗi i, j chạy N lần
+====> O(N^2)
+
+********* 	Nguyên tắc tính toán độ phức tạp: 
+
+
+1. Quy tắc hằng số
+	Nếu hằng số không quá lớn, ta có thể bỏ hằng số
+
+	ví dụ: 
+	O(2N) ~ O(N)
+	O(3N^2) ~ O(N^2)
+
+2. Quy tắc cộng: 
+
+	Trong một thuật toán, nếu có sử dụng nhiều thuật toán rời rạc, độ phức tạp tổng quát của thuật toán bằng độ phức tạp thuật toán lớn nhất
+
+3. Quy tắc nhân:
+
+	Nếu có nhiều thuật toán lồng nhau thì độ phức tạp tổng quát bằng tích các độ phức tạp đó
+
+		for i: 1 -> N
+			Gọi thuật toán A (O(NlogN))
+			=====> O(N * NlogN) = O(N^2logN)	
+
+Giả sử ta giải được một bài toàn và ta đã sử dụng thuật toán có độ phức tạp O(N^2)
+
+1 <= N <= 1 triệu
+
+=====> Số bước tính toán <= 10^12
+
+Tối ưu thuật toán là thực hiện giảm số bước tính toán mà vẫn bảo đảm kết quả chính xác.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Dynamic Array (Mảng động)
+
+Mảng tĩnh: 
+
+Khai báo mảng tĩnh: 
+
+int a[1000];
+
+Mảng tĩnh là một mảng mà khi ta khai báo mảng, số lượng phần tử cố định không thay đổi xuyên suốt chương trình.
+
+Trong quá trình sử dụng, ta chỉ sử dụng a[0], a[1], a[2]
+
+
+***********   Mảng động: 
+Mảng động là mảng mà ta có thể thay đổi kích thước của mảng (bộ nhớ được sử dụng cũng thay đổi theo)
+
+Khai báo mảng động 
+
+ 		#include <vector>
+
+Khai báo: 
+using namespace std;
+vector < <kiểu dữ liệu> > <tên mảng động>;
+
+	ví dụ:
+		vector <long long> a;  
+
+Một số hàm thường sử dụng trong vector
+
+	.resize(<kích thước mảng>): cung cấp số lượng phần tử yêu cầu vào mảng a  (Độ phức tạp là O(1))
+
+a.resize(10); (bộ nhớ sẽ sinh 10 ô nhớ, mỗi ô 8 byte để cấp cho mảng a)
+
+Ta có thể sử dụng a[0], a[1], a[2], ....,a[9]
+
+a.resize(4)
+
+Ta có thể sử dụng a[0], a[1], a[2], a[3]
+
+vector <long long> a;
+int n;
+cin >> n;
+a.resize(n);
+for (int i = 0; i < n; i++) {
+	cin >> a[i];
+}
+
+	.push_back(<giá trị>): thêm một phần tử vào cuối dãy a có giá trị tương ứng (lưu ý, giá trị phải có cùng kiểu dữ liệu trong dãy a) (Độ phức tạp là O(1))
+
+a = {5, 2, 9}
+a.push_back(8);
+a = {5, 2, 9, 8}
+
+	.back(): trả về giá trị của phần tử nằm cuối mảng động  (lưu ý: hàm sẽ báo lỗi nếu mảng a là mảng rỗng.)
+a = {5, 2, 9}
+
+cout << a.back(); // xuất số 9
+
+	.pop_back(): xóa giá trị cuối cùng trong mảng động nếu mảng động không rỗng (Độ phức tạp O(1))
+a = {5, 2, 9}
+a.pop_back();  //  a = {5, 2}
+
+. Ta hoàn toàn có thể sử dụng vector như một mảng bình thường:
+
+vector <long long> a;
+a.resize(n);
+for (int i = 0; i < n; i++) {
+	cin >> a[i];
+}
+int sum = 0;
+for (int i =0; i < n; i++) {
+	sum += a[i];
+}
+cout << sum;
+
+	.size(): trả về số lượng phần tử trong mảng động (Độ phức tạp O(1))
+
+	.empty(): trả về true/false tương ứng là mảng có rỗng hay không (Độ phức tạp O(1))
+
+	.clear(): xóa toàn bộ các phần tử trong mảng động (Độ phức tạp O(1))
+
+			---------------------------------------------------------------------------------------------------------------------------------
+Fashion in berland
+
+https://codeforces.com/problemset/problem/691/A
+
+
+
+			---------------------------------------------------------------------------------------------------------------------------------
+
+				BUỔI 2
+
+
+New year transportation: 
+
+Ta có một dãy gồm N số nguyên nhưng chỉ có N - 1 ô đầu tiên là có gía trị {a[1], a[2], ..., a[N - 1]} 
+
+Khi ta đứng tại một ô i ====> ta sẽ nhảy từ ô i đến ô i + a[i] 
+
+Cho một số K, hỏi ta có thể nhảy từ ô 1 đến ô K hay không ? Hoặc ta xác nhận là không thể nhảy đến ?
+
+
+
+Đặt một giá trị p: vị trí của ta ở thời điểm hiện tại 
+
+Ban đầu: p = 1 
+
+Nhận xét: Do a[i] > 0, ta chỉ có thể nhảy tiến đến chứ không thể nhảy lùi
+
+Trong lúc p < K: 
+  p = p + a[p]
+
+Nếu p == K: in ra YES
+else: in ra NO
+
+Đánh giá độ phức tạp: O(N)
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Cho một số nguyên dương D. Hãy in ra một bảng 2 chiều có KHÔNG QUÁ D hàng, D cột sao cho số lượng chuỗi ABC (viết theo dọc - ngang - chéo) bằng đúng N 
+
+D = 50, N = 2
+
+2 3 
+ABC
+ABC
+
+
+
+1 5 
+ABCBA
+
+
+6 6
+ABCAAA
+AAAAAA
+AAAAAA
+ABCAAA
+AAAAAA
+AAAAAA
+
+
+
+D = 50, N = 3 
+
+3 3
+ABC
+ABC
+ABC
+
+
+Level 1: D = 50 
+Level 2: D = 15 
+
+1 <= N <= 250 
+
+Multi testcase 
+
+1 test lớn bao gồm những test nhỏ 
+
+4
+13 2
+5 1 
+50 3
+3 1
+
+----------------------------------
+
+1 5 
+ABCBA
+1 3
+ABC
+3 3
+ABC
+ABC
+CBA
+1 3
+ABC
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Stack
+
+Stack là gì ?????? 
+
+Stack là một cấu trúc dữ liệu được tổ chức dưới mô hình "last in first out" 
+
+Khai báo stack: 
+
+#include <stack> 
+
+Cú pháp khai báo stack: 
+
+stack < <kiểu dữ liệu> > <tên stack>; 
+
+Ví dụ: 
+#include <stack> 
+
+stack <long long> mystack; 
+
+Một số hàm trong stack 
+
+. push(<giá trị>): Thêm một phần tử có giá trị tương ứng vào stack (Độ phức tạp O(1)) 
+
+stack <long long> mystack; 
+mystack.push(2); 
+mystack.push(5); 
+mystack.push(1); 
+mystack.push(9); 
+mystack.push(4);
+
+. pop(): Lấy phần tử ĐẦU TIÊN ra khỏi stack (LƯU Ý: Hàm pop() sẽ báo lỗi nếu stack rỗng) (Độ phức tạp O(1)) 
+stack <long long> mystack; 
+mystack.push(2); 
+mystack.push(5); 
+mystack.push(1); 
+mystack.pop();
+mystack.push(9); 
+mystack.push(4);
+
+. top(): Lấy giá trị của phần tử trên cùng (LƯU Ý: Hàm top() sẽ báo lỗi nếu stack rỗng) (Độ phức tạp O(1)) 
+stack <long long> mystack; 
+mystack.push(2); 
+mystack.push(5); 
+mystack.push(1); 
+mystack.pop();
+mystack.push(9); 
+mystack.push(4);
+mystack.pop();
+cout << mystack.top(); // xuất ra số 9
+
+. size(): Trả về số lượng phần tử trong stack (Độ phức tạp O(1)) 
+stack <long long> mystack; 
+mystack.push(2); 
+mystack.push(5); 
+mystack.push(1); 
+mystack.pop();
+mystack.push(9); 
+mystack.push(4);
+mystack.pop();
+cout << mystack.top(); // xuất ra số 9
+cout << (int) mystack.size(); // xuất ra số 3 
+
+. empty(): Trả về true / false tương ứng là stack có rỗng hay không ? (Độ phức tạp O(1)) 
+
+stack <long long> mystack; 
+mystack.push(2); 
+mystack.push(5); 
+mystack.push(1); 
+mystack.pop();
+mystack.push(9); 
+mystack.push(4);
+mystack.pop();
+if (mystack.empty() == true) {
+  cout << "stack rong"; 
+}
+else {
+  cout << "stack khong rong"; 
+}
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+ONP
+
+Cho một chuỗi s là một "biểu thức chính quy", hãy đưa ra chuỗi s sau khi chuyển về thành ký pháp Ba Lan ngược.
+
+
+s = (a+b)        ====> ab+ 
+s = ((a+b)*(c+d))  ==> (a+b)(c+d)* ===> ab+cd+*
+s = (((a*b)+(c*d))+((e*f)+g))    =====> ab*cd*+ef*g++
+
+ 
+Biểu thức chính quy nếu có dạng x o y ====> x y o 
+(((12*25)+(2*4))+((2*5)+90)) = 408 
+
+[12][25]*[2][4]*+[2][5]*[90]++
+
+stack = [ 408]
+
+-------------------------------------------------------------------------------------------------------------------
+
+Nearest Smaller Value: 
+
+Cho một dãy số a gồm N số nguyên dương. Với mỗi số a[i], hãy tìm chỉ số của số số gần i nhất về phía bên trái mà số đó nhỏ hơn a[i]
+
+
+N = 15 
+a = [5, 9, 1, 7, 8, 3, 10, 4, 7, 9, 9, 3, 15, 2, 8]
+
+===> 0 1 0 3 4 3 6 6 8 9 9 3 12 3 14 
+
+Thuật toán ngây thơ: 
+
+Với mỗi i, duyệt j từ i - 1 trở về 1, nếu có a[j] < a[i] thì xuất ra j và dừng !!!! 
+
+for i: 1 -> n 
+  for j: i - 1 -> 1 
+    nếu a[j] < a[i] 
+      in ra i 
+      dừng 
+  Xuất ra 0
+
+
+N = 100000 
+
+1 1 1 1 1 1 1 1 1 1 1....... 1 
+
+Độ phức tạp: O(N^2) 
+
+
+i = 1, j chạy 0 lần
+i = 2, j chạy 1 lần
+i = 3, j chạy 2 lần
+...
+i = N, j chạy N - 1 lần 
+
+Tổng số lần chạy: 1 + 2 + 3 + .... + N - 1 = N * (N - 1) / 2 
+
+Ý tưởng thuật toán: 
+
+a = [0, 5, 9, 1, 10, 8, 3, 10, 4, 7, 9, 9, 3, 15, 2, 8]
+
+Nhận xét: Nếu có một số nhỏ hơn số trước đó, vậy số trước đó "không còn cần thiết" 
+
+Ta thêm một số 0 vào vị trí 0 
+
+Với mỗi số a[i] (i: 1 -> n)
+
+Ta tạo một kho sẽ chứa những VỊ TRÍ ỨNG CỬ VIÊN để làm vị trí của số gần nhất nhỏ hơn 
+
+kho = {0, 
+
+0 1 0 3 3 
+
+đưa 0 vào stack 
+
+for i: 1 -> n 
+  while (a[st.top()] >= a[i]) 
+    st.pop() 
+  xuất ra st.top() 
+  đưa i vào st 
+
+Độ phức tạp: O(N) 
+
+
+
+
+N = 100000 
+
+0 1 1 1 1 1 1 1 1 1 1 1....... 1 
+
+kho = {0, 3 
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Advertisement 
+
+Có N cột được ghép sát lại với nhau. Ta cần cưa một biển quảng cáo có diện tích lớn nhất mà chỉ có thể cưa dựa theo cạnh của cột. Hỏi diện tích lớn nhất
+là bao nhiêu ???? 
+
+
+
+		----------------------------------------------------------------------------------------------------------------------------------------------
+					BUỔI 3
+			
+
+
+SPC6 (Spring Contest 2020)
+Cho một công thức hóa học của chất hữu cơ chỉ gồm C, H và O. Hãy tính phân tử khối của chất đó.
+
+CH3C00H: 60
+(COOH)2: 90
+(CH)2(O)4(CHO2COOH5)2: 
+
+*****Ý tưởng: 
+
+Ta sử dụng một stack để tính toán 
+
+Khi ta gặp ngoặc mở, ta đưa 0 vào stack 
+
+Khi gặp C đưa 12 vào stack 
+Khi gặp H đưa 1 vào stack 
+Khi gặp O đưa 16 vào stack 
+
+Khi gặp ngoặc đóng, tính tổng các giá trị trong stack và pop các giá trị trong stack cho đến khi gặp 0
+
+Khi gặp số thì nhân với giá trị top của stack 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Queue (Hàng Đợi)
+
+Queue là một cấu trúc dữ liệu được tổ chức theo nguyên tắc First in first out
+
+Khai báo queue: 
+
+#include <queue>
+
+Cú pháp khai báo: 
+
+queue < <kiểu dữ liệu> > <tên queue>;
+
+Ví dụ: 
+queue <int> myqueue;
+
+Một số hàm trong queue
+
+	.push(<giá trị>): thêm 1 phần tử vào queue (Độ phức tạp O(1))
+
+ví dụ: 		queue <int> mq;
+		mq.push(5);
+		mq.push(6); // [6, 5]
+
+	.pop(<giá trị>): xóa giá trị đầu tiên của queue (Độ phức tạp O(1))
+	.front(): lấy giá trị đầu tiên của queue (Độ phức tạp O(1))
+	.size(): Trả về số lượng phần tử trong queue (Độ phức tạp O(1))
+	.empty(): Trả về true/false tương ứng là queue có rỗng hay không
+
+					-------------------------------------------------------------------------------------
+That is your queue: 
+
+Có P bệnh nhân đang được xếp chờ trong 1 hàng đợi được đánh số từ 1 -> P. Y tá có C lệnh yêu cầu bệnh nhân, mỗi lệnh có 1 trong 2 loại: 
+
+.Loại N: yêu cầu bệnh nhân đứng đầu hàng ra khám, sau đó bệnh nhân này trở về cuối hàng
+.Loại E x: ưu tiên bệnh nhân thứ x lên đầu hàng. 
+
+Với mỗi loại N, hãy xuất ra bệnh nhân được khám. 
+
+					-------------------------------------------------------------------------------------
+
+Deque (Hàng đợi 2 đầu)
+
+Deque là hàng đợi nhưng ta có thể xử lý ở cả 2 đầu hàng đợi.
+
+Khai báo deque
+
+#include <deque>
+
+Cú pháp khai báo: 
+
+deque < <kiểu dữ liệu> > <tên deque>;
+
+ví dụ: 
+		deque <int> md;
+
+Một số hàm của deque: 
+	.push_front(<giá trị>): thêm 1 phần tử vào đầu của deque (Độ phức tạp O(1))
+	.pop_front(): xóa phần tử đầu tiên ra khỏi deque (Độ phức tạp O(1))
+	.front(): lấy giá trị đầu tiên của deque (Độ phức tạp O(1))
+	Lưu ý: hàm sẽ báo lỗi nếu deque rỗng
+	.push_back(<giá trị>): thêm 1 phần tử vào cuối deque (Độ phức tạp O(1))
+	.pop_back(): xóa phần tử ở cuối deque (Độ phức tạp O(1))
+	Lưu ý: hàm sẽ báo lỗi nếu deque rỗng
+	.back(): trả về giá trị cuối cùng của deque (Độ phức tạp O(1))
+	.size(): trả về số lượng phần tử trong deque (Độ phức tạp O(1))
+	.empty(): kiểm tra deque có rỗng hay không (true nếu rỗng, false trong trường hợp còn lại) (Độ phức tạp O(1))
+
+					-------------------------------------------------------------------------------------
+Min K: (huyền thoại lục vân tiên)
+
+Cho một dãy số nguyên dương a gồm N số. Xét K số liên tục, hãy xuất ra số có giá trị nhỏ nhất trong K số liên tục đang xét
+
+
+
+		----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+					BUỔI 4
+
+Min K: 
+
+Cho một dãy số a gồm N số nguyên dương. Xét K số liên tục, hỏi số nhỏ nhất là số nào ?
+k = 4
+a = [5, 9, 1, 2, 4, 6, 5, 3, 7, 8]
+
+********* Ý tưởng ngây thơ: 
+
+Duyệt i: 1 --> N
+ Đặt j = i + k - 1
+ Nếu j > N: break
+ Đặt mini = a[i]
+ Duyệt x: i --> j
+	nếu mini > a[x]
+	 gán mini = a[x]
+ Xuất mini
+
+N = 100000
+K = 50000
+
+Độ phức tạp: O(N^2)
+
+  					----------------------------------------------------------------------------
+
+Nhận xét: Nếu có 1 phần tử có giá trị nhỏ hơn và đứng đằng sau phần tử trước thì phần tử trước không còn quan trọng !!!!
+
+					----------------------------------------------------------------------------
+
+   Max Value of Equation: https://leetcode.com/problems/max-value-of-equation/description/
+
+	Cho N điểm trên mặt phẳng 2 chiều. Điểm thứ i có tọa độ là x[i], y[i]. Ta được cho một con số K. 
+
+	Biết N điểm thỏa mãn điều kiện hoành độ tăng dần
+
+		x[i] < x[j] nếu i < j
+
+	Cho số K, hãy chọn ra 2 điểm (i, j) sao cho thỏa mãn: 
+	
+		x[j] - x[i] <= k
+
+	sao cho giá trị yi + yj + |xi - xj| lớn nhất có thể.
+
+***** Thuật toán ngây thơ: 
+
+ans = -200000001;
+for i: 1 --> N
+   for j: i + 1 --> N
+	ans = max(ans, yi + yj + abs(x[i] - x[j]))
+
+Độ phức tạp: O(N^2)
+
+					----------------------------------------------------------------------------
+
+Thuật toán chuẩn: 
+
+yi + yj + |xi - xj| (i < j)
+
+ |xi - xj| = xj - xi (vì xj cơ bản đã > xi)
+
+yi + yj + |xi - xj|
+ = yi + yj + xj - xi
+ = (yi - xi) + (yj + xj)
+
+Nhận xét: 
+
+Nếu xj - xi > k ====> xj - xi' > k (i' < i)
+
+Do x1 < x2 < x3 < ... < xN
+
+x10 - x8 > k ====> x10 - x7 > k, x10 - x6 > k.....
+
+Với mỗi điểm thứ i, ta cần tìm điểm i xa j nhất có thể về phía bên trái sao cho xj - xi <= k
+
+======> Trong các điểm từ i -> j - 1, ta cần tìm điểm nào đó để giá trị (yi - xi) + (yj + xj) lớn nhất có thể
+
+(yi - xi) + (yj + xj)
+
+Tạo 2 bảng a và b với ý nghĩa
+
+a[i] = y[i] - x[i]
+b[i] = y[i] + x[i]
+
+(yi - xi) + (yj + xj) = a[i] + b[j]
+
+N = 8, k = 4
+
+1 -4	| -5 -3
+3 5	| 2 8
+4 -2	|-6 2
+8 -3	|-11 5
+10 -2	|-12 8
+11 9	|-2 20
+12 6	|-6 18
+15 -2	|-17 13
+
+j = 2, i = 1  =======> 3
+j = 3, i = 1  =======> 4
+j = 4, i = 3  =======> -1
+j = 5, i = 4  =======> -3
+j = 6, i = 4  =======> 9
+j = 7, i = 4  =======> 16
+j = 8, i = 6  =======> 11
+
+for j: 2 --> N
+  for i: 1 --> j - 1
+	nếu x[j] - x[i] <= k
+	 cập nhật ans = max (ans, y[i] + x[j] + y[i] - x[i])
+
+
+
+class Solution {
+public:
+    int findMaxValueOfEquation(vector<vector<int>>& points, int k) {
+        int n = (int) points.size();
+        vector <int> x(n), y(n); 
+        for (int i = 0; i < n; i++) {
+            x[i] = points[i][0];
+            y[i] = points[i][1]; 
+        } 
+        deque <int> mydeque; 
+        int ans = -1000000007; 
+        for (int i = 0; i < n; i++) {
+            while (mydeque.empty() == false && x[i] - x[mydeque.front()] > k) {
+                mydeque.pop_front(); 
+            }    
+            if (mydeque.empty() == false) {
+                ans = max(ans, x[i] + y[i] + y[mydeque.front()] - x[mydeque.front()]);
+            }
+            while (mydeque.empty() == false && y[i] - x[i] >= y[mydeque.back()] - x[mydeque.back()]) {
+                mydeque.pop_back(); 
+            }
+            mydeque.push_back(i); 
+        }
+        return ans; 
+    }
+};
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Heap (Đống)
+
+Heap là một cấu trúc dữ liệu được tổ chức dưới dạng một cây nhị phân đầy đủ có tính năng lấy được phần tử lớn nhất hoặc nhỏ nhất trong
+ một tập hợp các phần tử.
+
+Có 2 loại heap 
+
+	Min heap: là cấu trúc dữ liệu ưu tiên phần tử có giá trị nhỏ nhất trong heap
+	Max heap: là cấu trúc dữ liệu ưu tiên phần tử có giá trị lớn nhất trong heap 
+
+Mô hình của Heap như sau (Max Heap)
+
+Nút đầu tiên sẽ mang giá trị lớn nhất
+Mỗi nút con sẽ là giá trị lớn nhất trong toàn bộ cây con nó quản lý.
+
+Mỗi cây heap sẽ có 3 thao tác
+
+	Thêm nút				: O(log(N))
+	Xóa nút					: O(log(N))
+	Truy vấn giá trị lớn nhất (nhỏ nhất)	: O(1)
+
+Cấu trúc dữ liệu hàng đợi ưu tiên (priority queue)
+
+Khai báo hàng đợi ưu tiên: 
+
+#include <queue>
+
+Cú pháp: 
+
+priority_queue < <kiểu dữ liệu> > <tên priority queue>; //mặc định là max heap
+
+Khai báo min heap 
+#include <queue>
+#include <functional>
+#include <vector>
+
+priority_queue < <kiểu dữ liệu> >, vector < <kiểu dữ liệu> >, greater < <kiểu dữ liệu> > > <tên min heap>;
+
+Ví dụ: 
+
+priority_queue <long long> mq; // khai báo 1 max heap có các phần tử kiểu long long
+priority_queue <int, vector <int>, greater <int> > mypq; // khai báo 1 min heap có các phần tử kiểu int
+
+Một số hàm trong priority_queue
+
+	.push(<giá trị>): thêm một giá trị vào priority_queue (Độ phức tạp O(logN))
+	.pop(): Xóa giá trị lớn nhất, nhỏ nhất ra khỏi priority_queue (Độ phức tạp O(logN))
+		Lưu ý: hàm sẽ báo lỗi nếu priority_queue rỗng
+	.top(): lấy giá trị lớn nhất (hoặc nhỏ nhất) trong priority_queue (Độ phức tạp O(1))
+		Lưu ý: hàm sẽ báo lỗi nếu priority_queue rỗng
+	.empty(): trả về true/false tương ứng là priority_queue có rỗng hay không (Độ phức tạp O(1))
+	.size(): trả về số lượng trong priority_queue (Độ phức tạp O(1))
+
+					--------------------------------------------------------------------
+
+Add all: https://vjudge.net/problem/UVA-10954
+
+Cho một dãy số A gồm N số. Ta cần hợp nhất các số trong dãy a lại thành 1 số
+
+Với mỗi thao tác, ta chọn 2 số a[i] và a[j] bất kỳ, xóa 2 số đó và thêm số a[i] + a[j] vào dãy.
+Chi phí của thao tác trên là a[i] + a[j]
+
+Thự hiện cho đến khi dãy còn 1 số
+
+Hỏi chi phí nhỏ nhất là bao nhiêu ?
+
+					--------------------------------------------------------------------
+
+
+Powering the hero  https://codeforces.com/contest/1800/problem/C2
+
+Cho một dãy số a, một vài phần tử trong dãy số a là số 0, những phần còn lại là số dương
+
+Xét các phần tử a[i] (i: i -> N)
+
+nếu a[i] là số dương thì ta đưa a[i] vào một hàng đợi Q
+nếu a[i] là số 0, ta xét từng phần tử trong hàng đợi, nếu phần tử hiện tại ta sử dụng thì ta sẽ cộng 
+	vào số điểm là giá trị của phần tử đó, nếu không sử dụng, phần tử đó sẽ bị xóa khỏi hàng đợi.
+Hỏi tổng điểm lớn nhất là bao nhiêu ?
+
+N = 15
+
+a = [5, 1, 0, 2, 0, 0, 0, 4, 1, 0, 0, 2, 9, 0, 0, 1]
+
+Q = [5, 1
+
+		----------------------------------------------------------------------------------------------------------------------------------------------
+																																				
+					
+				BUỔI 5
+	Qheap1:  
+
+Cho Q yêu cầu, mỗi yêu cầu thuộc 1 trong 3 loại: 
+
+Loại 1: Đưa số v vào min heap Q
+Loại 2: Cho số v, hãy xóa số v khỏi min heap Q
+Loại 3: Hãy đưa ra số có giá trị nhỏ nhất.
+
+***********Thuật ngây thơ: 
+
+Tạo min heap Q
+
+với truy vấn loại 1: đưa v vào min heap
+với truy vấn loại 3: xuất top của min heap
+với truy vấn loại 2: tạo 1 min heap Q'
+
+ta đổ các phần tử trong Q vào Q' đến khi gặp được v
+
+Xóa v khỏi Q
+
+Ta đổ tất cả các phần tử trong Q' vào lại Q
+
+Độ phức tạp ~ O(N^2 * log(N))
+
+				-----------------------------------------------------------------------------
+
+*******Thuật toán chuẩn: 
+
+Ta tạo một kho Q2 sẽ chứa những giá trị ĐƯỢC YÊU CẦU XÓA nhưng VẪN CHƯA BỊ XÓA
+
+
+
+				-----------------------------------------------------------------------------
+
+AC3 (Autumn Contest 2019)
+
+Cho N đoạn thẳng, đoạn thẳng i sẽ phủ các điểm có giá trị nguyên từ l[i] đến r[i]
+
+Cho số K, ta cần chọn ra K đoạn thẳng nào đó sao cho số lượng điểm có tọa độ nguyên được cả K đoạn này phủ lên là nhiều nhất
+
+Nhận xét:
+
+Giả sử ta đã chọn ra được K đoạn, thì tập hợp những điểm thỏa mãn sẽ tạo thành 1 đoạn thẳng liên tục
+
+Bài toán đưa về: Hỏi chọn K đoạn, tính L = max{l1, l2, ...lK}, R = min{r1, r2, ...., rK}
+
+Hỏi R - L + 1 lớn nhất là bao nhiêu ?
+
+Nếu ta sắp xếp lại các đoạn tăng dần theo l[i]
+
+Nếu ta chọn K đoạn 
+
+L = lK
+
+Độ phức tạp: O(NlogN)
+
+Sử dụng thư viện algorithm
+
+#include <algorithm>
+
+sort(con trỏ đầu, con trỏ cuối);
+
+Ví dụ
+
+a = [2, 5, 1, 9, 4, 3] // mảng này đánh số từ 0 đến 5
+
+sort (a, a + 6); // sắp xếp dãy a tăng dần từ vị trí 0 -> 5. a = [1, 2, 3, 4, 5, 9]
+sort(a + 2, a + 5); // sắp xếp đoạn [2, 4] tăng dần. a = [2, 5, 1, 4, 9, 3]
+
+vector <int> a = {2, 5, 1, 9, 4, 3}
+sort (a.begin(), a.end());
+
+struct segment {
+	int l, r;
+};
+
+bool compare(segment &a, segment&b) {
+	if (a.l < b.l) return true;
+	return false;
+}
+
+vector <segment> a;
+//đọc dữ liệu
+sort (a.begin(), a.end(), compare);
+
+
+Trong thực tiễn: Quick sort sử dụng rất tốt (Tốt hơn cả merge sort)
+Trong thi đấu: Ban giám khảo sẽ tạo 1 test để bắt chết thuật toán  Quick Sort
+
+Merge sort: O(NlogN)
+Quick sort: O(N^2)
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Binary Search Tree (Cây tìm kiếm nhị phân)
+
+Cây nhị phân: Là một mô hình dạng cây và mỗi nút trên cây sẽ quản lý TỐI ĐA 2 nút con.
+
+Binary Search Tree là gì:
+
+Là cấu trúc dữ liệu tổ chức dưới dạng cây nhị phân và có tác dụng tìm kiếm 1 phần tử có giá trị cho trước trong cây. 
+Xét 1 nút, tất cả những nút của cây con bên tría sẽ có giá trị nhỏ hơn giá trị nút ta đang xét và tất cả những cây con bên phải 
+sẽ có giá trị lớn hơn giá trị nút ta đang xét.
+
+1. Tìm kiếm 1 giá trị x trên cây
+
+2. Thêm 1 nút có giá trị x vào cây
+
+3. Xóa 1 nút có giá trị x trên cây (nếu có)
+
+******* Balanced Binary Search Tree (Cây tìm kiếm nhị phân cân bằng)
+
+Xét bài toán: Đưa các phần tử 1 -> 100000 vào cây BST truyền thống
+
+Nhận xét: Độ phức tạp của việc thêm vào cây ~ O(N^2) nếu sử dụng cây BST truyền thống
+
+******* Balanced BST
+
+Đây là một cây Binary Search Tree và nó có khả năng "tự cân bằng". "Cân bằng" là CHIỀU CAO của 2 cây con trái và phải chênh lệch nhau không quá 1 đơn vị
+
+Có 2 loại Balanced BST: 
+ 	Cây AVL
+
+	Cây Red Black Tree
+
+******** Cấu trúc dữ liệu set: 
+
+	set là cấu trúc dữ liệu tập hợp dùng để lưu trữ các phần tử và set được tổ chức dưới dạng cây Red Black Tree
+
+Khai báo: 
+
+#include <set>
+
+Cú pháp khai báo: 
+
+set < <kiểu dữ liệu> > <tên set>;
+
+ví dụ: 
+
+set <long long> myset; //khai báo 1 set và các phần tử có kiểu dữ liệu long long
+
+Một số hàm trong set:
+
+		.insert(<giá trị>): thêm một giá trị nữa vào set  // Độ phức tạp O(log(N))
+
+ví dụ: 
+
+set <long long> myset;
+myset.insert(5);
+myset.insert(2);
+myset.insert(4);
+
+		.find(<giá trị>): trả về ĐỊA CHỈ CON TRỎ của giá trị mà ta cần tìm // Độ phức tạp O(log(N))
+
+Lưu ý: Nếu giá trị không tồn tại trong set thì địa chỉ trả về .end() của set
+
+set <long long> myset;
+myset.insert(5);
+myset.insert(2);
+myset.insert(4);
+set <long long>:: interator it;
+it = myset.find(4);
+if (it != myset.end()) {
+	cout << "so 4 co xuat hien trong set";
+}
+else {
+	cout << "so 4 ko xuat hien trong set";
+} 
+
+		.erase(<địa chỉ của ô có phần tử cần xóa>); :Xóa nút mà có địa chỉ đang xét // Độ phức tạp O(log(N))
+
+Lưu ý: nếu truyền vào địa chỉ là myset.end() thì sẽ báo lỗi
+
+set <long long> myset;
+myset.insert(5);
+myset.insert(2);
+myset.insert(4);
+set <long long>:: interator it;
+it = myset.find(4);
+if (it != myset.end()) {
+	cout << "so 4 co xuat hien trong set";
+	myset.erase(it);
+}
+else {
+	cout << "so 4 ko xuat hien trong set";
+} 
+
+
+		.lower_bound(<giá trị>): Trả về địa chỉ ô nhớ có chứa phần tử có giá trị nhỏ nhất >= giá trị đang xét // Độ phức tạp O(log(N))
+
+Lưu ý: Nếu không tồn tại thì địa chỉ sẽ trả về myset.end();
+
+set <long long> myset;
+myset.insert(5);
+myset.insert(2);
+myset.insert(4);
+myset.insert(9);
+myset.insert(1);
+myset.insert(8);
+set <long long>:: interator it = myset.lower_bound(5); 
+if (it != myset.end()) {
+	cout << "So nho nhat >= gia tri dang xet la: " << *it; // Xuất số 5
+} else {
+	 cout << "không tồn tại";
+}
+
+		.upper_bound(<giá trị>): Trả về địa chỉ ô nhớ có chứ phần tử có giá trị nhỏ nhất > giá trị đang xét // Độ phức tạp O(log(N))
+
+Lưu ý: Nếu không tồn tại thì địa chỉ sẽ trả về myset.end();
+
+set <long long> myset;
+myset.insert(5);
+myset.insert(2);
+myset.insert(4);
+myset.insert(9);
+myset.insert(1);
+myset.insert(8);
+set <long long>:: interator it = myset.lower_bound(5); 
+if (it != myset.end()) {
+	cout << "So nho nhat >= gia tri dang xet la: " << *it; // Xuất số 8
+} else {
+	 cout << "không tồn tại";
+
+	.Tips nhỏ
+ 
+ Nếu muốn tìm phần tử lớn nhất mà bé hơn giá trị đang xét: Ta tìm giá trị nhỏ nhất >= giá trị đang xét, sau đó lùi địa chỉ con trỏ về địa chỉ 
+trước
+
+set <long long> myset;
+myset.insert(5);
+myset.insert(2);
+myset.insert(4);
+myset.insert(9);
+myset.insert(1);
+myset.insert(8);
+set <long long>:: interator it = myset.lower_bound(5); 
+if (it != myset.begin()) {
+	it--;
+	cout << "phần tử có giá trị lớn nhất nhỏ hơn giá trị hiện tại là:  " << *it; // Xuất số 4
+}
+
+	.empty(): trả về true/false tương ứng là set đã rỗng hay chưa rỗng // Độ phức tạp O(1)
+	.size(): trả về số lượng phần tử trong set // Độ phức tạp O(1)
+	.clear(): xóa toàn bộ các phần tử trong set // Độ phức tạp O(1)
+	.swap(<set khác>): hoán đổi 2 set cho nhau // Độ phức tạp O(1)
+
+Ví dụ: 
+set <long long> myset1, myset2;
+myset1.insert(5);
+myset1.insert(2);
+myset1.insert(4);
+myset2.insert(9);
+myset2.insert(1);
+myset2.insert(8);
+
+myset1.swap(myset2);
+	.duyệt các phần tử trong set và in ra theo giá trị tăng dần: 
+		for (địa chỉ bắt đầu; chưa kết thúc; sang địa chỉ tiếp theo) {
+			xuất giá trị;
+  		} 
+		
+		for (set <long long>:: interator it = myset.begin(); it != myset.end(); it++) {
+			cout << *it << " "; 
+		}
+
+
+****** Multiset:
+
+	Được tổ chức giống như set nhưng các phần tử có thể trùng nhau.
+
+Khai báo:
+
+#include <set>
+
+Cú pháp: 
+
+multiset < <kiểu dữ liệu> > <tên multiset>;
+
+ví dụ: multiset <int> mymultiset;
+
+
+					-----------------------------------------------------------------------------
+Minimum Loss:
+
+https://www.hackerrank.com/challenges/minimum-loss/problem
+
+Có một căn nhà giá sẽ thay đổi theo từng năm. Năm thứ i nhà có giá là p[i]
+
+Ta chọn 1 năm để mua căn nhà, sau đó chọn 1 năm nào đó đê bán lại căn nhà mà BUỘC phải lỗ.
+
+Hỏi ta lỗ ít nhất là bao nhiêu
+
+N = 8
+p = [3, 8, 2, 6, 10, 9, 2, 4]
+ 
+===> 1
+
+Thuật toán ngây thơ:
+
+ans = 1000000007;
+for i: 1 -> N
+   for j: i + 1 -> N
+	nếu p[i] > p[j]
+	  nếu ans > p[i] - p[j];
+		ans = p[i] - p[j];
+Độ phức tạp: O(N^2)
+
+
+Giả sử ta muốn bán nhà ở năm thứ j ====> hỏi trong những năm từ 1 --> j - 1, ta cần mua nhà như thế nào để tiền lỗ là ít nhất.
+
+Ta sử dụng một kho set
+
+
+		----------------------------------------------------------------------------------------------------------------------------------------------
+
+				BUỔI 6
+
+
+Movie Festival II: 
+
+Có N bộ phim sẽ được chiếu. Bộ phim thứ i sẽ chiếu từ thời điểm start[i] đến end[i]. 
+
+Có K người vào rạp phim, mỗi người sẽ muốn xem trọn vẹn bộ phim. Mỗi bộ phim chỉ có thể gán cho 1 người xem 
+
+Hỏi có thể có tối đa bao nhiêu bộ phim có thể xem ????
+
+
+Nhận xét: Thời điểm bắt đầu của 1 bộ phim không quan trọng, ta quan tâm đến thời điểm kết thúc của bộ phim
+N = 10, K = 4 
+[1, 3]     x   
+[2, 5]     x
+[4, 5]     x
+[2, 6]     
+[1, 8]     
+[5, 8]     
+[4, 8] 
+[3, 9] 
+[1, 10]  
+
+====> 6 bộ phim 
+
+ans = 3
+Kho = { 5, 5, 0, 0 }
+
+Kho sử dụng multiset 
+
+Tìm phần tử lớn nhất <= giá trị đang xét ?????? 
+
+myset = {5, 8, 1, 2, 9} 
+
+Gọi iterator it = myset.upper_bound(4) (trả ra số 5)
+
+Nếu it != myset.begin(): it-- 
+
+Độ phức tạp: O(NlogN + NlogK)
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+Reconstruct The String: 
+
+Cho một chuỗi s (ta hoàn toàn không biết chuỗi này) 
+
+Yêu cầu hãy tái tạo chuỗi s 
+
+Ta có những gợi ý để khôi phục chuỗi s 
+
+Mỗi gợi ý bao gồm 1 chuỗi st và K số nguyên p1, p2, ..., pK 
+
+Chuỗi st sẽ xuất hiện trong chuỗi s như là 1 chuỗi con và chuỗi st sẽ xuất hiện ở những vị trí p1, p2, ...., pK 
+
+Nếu có nhiều cách tạo ra chuỗi s cùng thỏa mãn những gợi ý trên, hãy in ra chuỗi s có thứ tự từ điển nhỏ nhất. 
+
+
+s = aabaccaaabccccaaaabc
+
+a 4 1 4 8 17 
+cc 3 5 11 12
+aab 2 1 17 
+abc 2 9 18 
+b 3 3 10 19
+
+Thuật toán ngây thơ: 
+
+Với mỗi vị trí xuất hiện của chuỗi st, ta tiến hành ta điền từ vị trí p đến những vị trí mà st có thể điền. 
+
+s = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa......... aaaa" 
+
+1 
+aaaaa......aaa: 500000 1 2 3 4 5 6 7 ..... 500000 
+
+
+Thuật toán chuẩn: 
+
+Ta đặt length là độ dài chuỗi s có thể có: 
+
+Với mỗi gợi ý điền chuỗi st, ta sẽ tìm vị trí p xa nhất mà st có xuất hiện 
+
+st sẽ xuất hiện lần cuối cùng ở những vị trí: p, p + 1, p + 2, p + len(st) - 1 
+
+length = max(length, p + len(st) - 1) 
+
+s = aaba???a????????aab?
+
+aab 2 1 17 
+a 4 1 4 8 17 
+cc 3 5 11 12
+abc 2 9 18 
+b 3 3 10 19
+
+Kho = { 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16,   20 }  (tổ chức = set) 
+
+
+s = "aaaaaaaaaaaaaaaaaaaa .......... aaaaa" 
+
+1 
+aaaaa......... aaaa 500000 1 2 3 4 5 ... 500000 
+
+Độ phức tạp: O(NlogN) 
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+**********Cấu trúc dữ liệu map 
+
+		Map là một cấu trúc dữ liệu tổ chức dưới dạng <key, value> và map được tổ chức bằng cây đỏ đen (red black tree)
+
+LƯU Ý !!!! Map và Hashmap khác nhau hoàn toàn 
+
+Khai báo map: 
+
+#include <map> 
+
+Cú pháp khai báo: 
+
+map < <kiểu dữ liệu của key>, <kiểu dữ liệu của value> > <tên map>; 
+
+map <string, int> mymap; 
+
+Lưu ý: khóa trong map không được phép trùng nhau, tuy nhiên 2 khóa khác nhau có thể trùng value. 
+
+Ví dụ: 
+
+mymap["Khoi"] = 27; 
+mymap["Le"] = 26; 
+mymap["Son"] = 27;  
+
+Lưu ý: Operator [ ] không phải là operator truyền chỉ số của mảng. 
+
+Một số hàm trong map: 
+
+	. Operator [ ]: Thêm một khóa với giá trị tương ứng vào map (O(logN)) 
+
+Ví dụ: 
+
+#include <map>
+
+map <string, int> mymap; 
+mymap["Khoi"] = 27; 
+mymap["Le"] = 26; 
+mymap["Son"] = 27;  
+
+	. insert(<giá trị khóa>, <giá trị của value>): Thêm một khóa với giá trị tương ứng vào map (O(logN))
+
+Ví dụ: 
+
+map <string, int> mymap; 
+mymap["Khoi"] = 27; 
+mymap["Le"] = 26; 
+mymap.insert("Son", 27); 
+
+	. find(<giá trị khóa>): Tìm node có giá trị khóa tương ứng và trả về địa chỉ con trỏ trỏ vào node đó (O(log(N)))
+
+Lưu ý: Nếu giá trị khóa không tồn tại trong map, con trỏ sẽ trỏ về mymap.end() 
+
+map <string, int> mymap; 
+mymap["Khoi"] = 27; 
+mymap["Le"] = 26; 
+mymap.insert("Son", 27); 
+map <string, int>::iterator it = mymap.find("Khoi"); 
+if (it != mymap.end()) {
+  cout << "Co ton tai phan tu"; 
+}  
+else {
+  cout << "Khong ton tai phan tu"; 
+}
+
+	. erase(<địa chỉ của node cần xóa>): Xóa node có địa chỉ con trỏ tương ứng trong map (O(log(N))) 
+
+Lưu ý: Không được phép xóa khi địa chỉ trỏ vào mymap.end()
+
+map <string, int> mymap; 
+mymap["Khoi"] = 27; 
+mymap["Le"] = 26; 
+mymap.insert("Son", 27); 
+map <string, int>::iterator it = mymap.find("Khoi"); 
+if (it != mymap.end()) {
+  cout << "Co ton tai phan tu"; 
+  mymap.erase(it); 
+}  
+else {
+  cout << "Khong ton tai phan tu"; 
+}
+
+	. lower_bound(<giá trị của khóa>): Trả về địa chỉ của node có giá trị khóa nhỏ nhất >= giá trị của khóa đang xét (O(logN))
+
+map <string, int> mymap; 
+mymap["Khoi"] = 27; 
+mymap["Le"] = 26; 
+mymap.insert("Son", 27); 
+map <string, int>::iterator it = mymap.lower_bound("Khoi"); 
+if (it != mymap.end()) {
+  cout << "Ten cua nguoi nay la: " << it->first << endl; 
+  cout << "Tuoi cua nguoi nay la: " << it->second;  
+}  
+else {
+  cout << "Khong ton tai phan tu"; 
+}
+
+	. upper_bound(<giá trị của khóa>): Trả về địa chỉ của node có giá trị khóa nhỏ nhất > giá trị của khóa đang xét (O(logN))
+
+map <string, int> mymap; 
+mymap["Khoi"] = 27; 
+mymap["Le"] = 26; 
+mymap.insert("Son", 27); 
+map <string, int>::iterator it = mymap.upper_bound("Khoi"); 
+if (it != mymap.end()) {
+  cout << "Ten cua nguoi nay la: " << it->first << endl; 
+  cout << "Tuoi cua nguoi nay la: " << it->second;  
+}  
+else {
+  cout << "Khong ton tai phan tu"; 
+}
+
+	. empty(): Trả về true / false tương ứng map có rỗng hay không (O(1)) 
+	. size(): Trả về số lượng phần tử trong map (O(1)) 
+	. clear(): Xóa toàn bộ các phần tử trong map (O(1))
+	. Duyệt các phần trong map theo khóa tăng dần: 
+
+for (map <string, int>::iterator it = mymap.begin(); it != mymap.end(); it++) {
+  cout << it->first << "     " << it->second << endl; 
+}
+
+	. swap(<map khác>): Hoán đổi 2 map cho nhau  (O(1))
+
+LƯU Ý: map khác phải có cùng kiểu dữ liệu khóa và kiểu dữ liệu giá trị với map hiện tại 
+
+map <string, int> M1, M2; 
+M1["Khoi"] = 27; 
+M1["Le"] = 26; 
+M2.insert("Son", 27); 
+M1.swap(M2); 
+			
+			-----------------------------------------------------------------------------
+
+Students and mentors:
+
+Có N học sinh, học sinh thứ i có rating là a[i]. Những học sinh này sẽ muốn chọn mentor cho riêng mình
+
+Một học sinh i sẽ chọn mentor j nếu a[i] <= 2 * a[i]
+
+Với mỗi học sinh i, hỏi rating của mentor cao nhất có thể chọn là bao nhiêu ???
+
+5
+1000 600 1000 2300 1800
+
+		Ý tưởng lời giải: 
+
+Kho = { 1000 600 1000 2300 1800}
+
+Với mỗi a[i], ta xét 2 * a[i], ta tìm phần tử lớn nhất <= 2 * a[i] bằng hàm upper_bound, sau đó gọi it--
+
+Kho này sẽ được tổ chức bằng multiset ?????
+
+1000 3000 4000 5000 4000 10000
+
+S = { 1000 3000 4000 5000 4000 10000 }
+
+1000 1000 3000 4000 5000 4000 10000
+
+map <int, int> mymap;
+
+Với mỗi rating a[i]: mymap[a[i]]++
+
+Duyệt lại với mỗi a[i], truy phần tử lớn nhất <= 2 * a[i]
+
+Khi trả về giá trị x, nếu x != a[i] ===> x có thể làm mentor  cho a[i]
+
+Nếu x == a[i]: hỏi mymap[a[i]] > 1  ===> x có thể làm mentor cho a[i], ngược lại thì không thể.
+
+
+#include <iostream> 
+#include <map>
+#include <fstream>
+int numTest; 
+int a[100005];
+std::map <int, int> mymap;  
+int n; 
+
+int main () {
+  //freopen("input.txt", "r", stdin);
+  //freopen("output.txt", "w", stdout);
+  std::cin >> numTest; 
+  for (int testCase = 1; testCase <= numTest; testCase++) {
+    std::cout << "Case #" << testCase << ": "; 
+    std::cin >> n;
+    mymap.clear(); 
+    for (int i = 1; i <= n; i++) {
+      std::cin >> a[i];
+      mymap[a[i]]++; 
+    }
+    for (int i = 1; i <= n; i++) {
+      std::map <int, int>::iterator it = mymap.upper_bound(2 * a[i]);
+      it--;
+      if (it->second == 1 && it->first == a[i]) {
+        if (it == mymap.begin()) {
+          std::cout << "-1 "; 
+        } 
+        else {
+          it--;
+          std::cout << it->first << ' ';
+        }
+      }
+      else {
+        std::cout << it->first << ' ';
+      }
+    } 
+    std::cout << std::endl;
+  }
+  return 0; 
+}
+
+
+
+		----------------------------------------------------------------------------------------------------------------------------------------------
+			
+				BUỔI 7
+WC3 (Winter Contest 2021) 
+
+Cho N dãy số {a1, a2, a3, ...., aN}, các dãy có số lượng số bằng nhau và số lượng số là B 
+
+Mỗi số sẽ chỉ có giá trị 0 hoặc 1 
+
+Đếm có bao nhiêu đoạn [l .. r] thỏa mãn: Xét từng cột j (j: 1 -> B), tổng số lượng số 1 của tất cả các dãy a từ vị trí l đến r trên cột j đó là bằng nhau. 
+
+----------------------------------------------------------------------------------------------------------------
+
+Ý tưởng ngây thơ: 
+
+Duyệt tất cả các đoạn [l .. r] 
+
+Với mỗi đoạn [l .. r], ta duyệt mỗi cột và ta đếm số lượng số 1 trên mỗi cột đó. 
+
+ans = 0 
+for l: 1 -> n 
+  for r: l -> n 
+    vector <int> totalOnes;  
+    for j: 1 -> B 
+       int count = 0
+       for i: l -> r 
+          nếu a[i][j] == 1: 
+            count = count + 1 
+       totalOnes.push_back(count) 
+    Kiểm tra các phần tử trong totalOnes có bằng nhau hay không ????? 
+    Nếu thỏa thì tăng ans = ans + 1
+
+O(N^3 * B)
+
+--------------------------------------------------------------------------------------------------------------
+
+Xét bài toán: Cho dãy số a gồm N số 0 hoặc 1. Cho các truy vấn, mỗi truy vấn gồm 2 số l và r. Hãy tính số lượng số 1 trong đoạn [l .. r] 
+
+a =      [0, 0, 1, 0, 1, 1, 0, 1, 0] 
+sum = [0, 0, 0, 1, 1, 2, 3, 3, 4, 4] 
+
+l = 2, r = 5  =====> 2 
+l = 1, r = 8  =====> 4 
+
+Gọi sum[i] với ý nghĩa: sum[i] = số lượng số 1 trong các phần tử từ 1 -> i 
+
+sum[0] = 0 
+nếu a[i] == 1: 
+sum[i] = sum[i - 1] + 1 
+else: 
+sum[i] = sum[i - 1] 
+
+Xét đoạn [l .. r] = a[l] + a[l + 1] + ... + a[r] 
+
+sum[r] = a[1] + a[2] + .... + a[r] 
+sum[l - 1] = a[1] + a[2] + ... + a[l - 1] 
+
+====> sum[r] - sum[l - 1] = a[l] + a[l + 1] + ..... + a[r] 
+
+Số lượng số 1 trên đoạn [l .. r] = sum[r] - sum[l - 1] 
+
+------------------------------------------------------------------------------------------------------
+
+
+ans = 0 
+for l: 1 -> n 
+  for r: l -> n 
+    vector <int> totalOnes;  
+    for j: 1 -> B 
+       int count = 0
+       for i: l -> r 
+          nếu a[i][j] == 1: 
+            count = count + 1 
+       totalOnes.push_back(count) 
+    Kiểm tra các phần tử trong totalOnes có bằng nhau hay không ????? 
+    Nếu thỏa thì tăng ans = ans + 1
+
+
+Gọi sum[i][j] = Tổng a[1][j] + a[2][j] + a[3][j] + ..... + a[i][j] 
+
+Xây dựng bảng sum: 
+
+for j: 1 -> B 
+  sum[0][j] = 0 
+  for i: 1 -> N 
+    sum[i][j] = sum[i - 1][j] + a[i][j] 
+
+ans = 0 
+for l: 1 -> n 
+  for r: l -> n 
+    vector <int> totalOnes;  
+    for j: 1 -> B 
+       int count = sum[r][j] - sum[l - 1][j] 
+       totalOnes.push_back(count) 
+    Kiểm tra các phần tử trong totalOnes có bằng nhau hay không ????? 
+    Nếu thỏa thì tăng ans = ans + 1
+
+O(N^2 * B)
+
+--------------------------------------------------------------------------------------------------------
+
+Nhận xét: Toàn bộ các phần tử trong totalOnes đều phải bằng nhau 
+
+=====> 
+
+sum[r][1] - sum[l - 1][1] = sum[r][2] - sum[l - 1][2] 
+sum[r][2] - sum[l - 1][2] = sum[r][3] - sum[l - 1][3] 
+........
+sum[r][B - 1] - sum[l - 1][B - 1] = sum[r][B] - sum[l - 1][B]
+
+<=> 
+
+sum[r][1] - sum[r][2] = sum[l - 1][1] - sum[l - 1][2] 
+sum[r][2] - sum[r][3] = sum[l - 1][2] - sum[l - 1][3]
+.......
+sum[r][B - 1] - sum[r][B] = sum[l - 1][B - 1] - sum[l - 1][B]
+
+Tạo N dãy số D[1], D[2], D[3], ...., D[N] 
+
+D[i][j] = sum[i][j] - sum[i][j + 1] 
+
+D[r][1] = D[l - 1][1]  
+D[r][2] = D[l - 1][2] 
+.......
+D[r][B - 1] = D[l - 1][B - 1] 
+
+Một đoạn [l .. r] sẽ thỏa mãn nếu D[r] == D[l - 1] 
+
+Sử dụng map <vector <int>, int> mymap; 
+
+mymap[D[0]]++
+ans = 0 
+for i: 1 -> N 
+  ans += mymap[D[i]]
+  mymap[D[i]]++ 
+
+Xuất ans 
+
+O(NlogN * B)
+
+1 <= N <= 30000 
+
+30000 * log(30000) * 10 
+
+			---------------------------------------------------------------------------------------------------------------
+
+    Bitset 
+
+	Trong một công ty có N công nhân (1 <= N <= 5000), mỗi công nhân sẽ có 1 lịch rảnh trong tháng
+
+	Có 1 dự án cần 2 công nhân. Hỏi cần chọn 2 công nhân nào để số ngày rảnh của cả 2 là nhiều nhất ??????? 
+
+		N = 5 
+
+		Công nhân 1: {1, 2, 5, 8, 9, 15, 16, 18, 22, 24}             
+		Công nhân 2: {4, 5, 9, 10, 15, 19, 27, 30}                   
+		Công nhân 3: {4, 10, 15, 16, 18, 20} 
+		Công nhân 4: {2, 3, 9, 10, 13, 14, 15, 19, 21, 25, 30} 
+		Công nhân 5: {1, 3, 5, 6, 9, 15, 18, 20, 25, 29, 30} 
+
+			for i: 1 -> N 
+  			   Tạo một bảng mark với ý nghĩa: mark[x] = true nếu ngày x, công nhân i rảnh 
+  				for j: i + 1 -> N 
+    				   countFreeDays = 0
+   			 	  for x là những ngày rảnh của công nhân j 
+      					nếu mark[x] == true
+        				countFreeDays = countFreeDays + 1 
+        					cập nhật kết quả 
+
+O(N^2 * 30) 
+
+*********bitset là gì ? 
+
+    bit là các phần tử chỉ mang giá trị 0 hoặc 1 
+
+bitset là một cấu trúc dữ liệu chứa một tập hợp các bit 
+
+Khai báo: 
+
+#include <bitset> 
+
+Cú pháp khai báo: 
+
+bitset < <SỐ LƯỢNG BIT> > <tên bitset>; 
+
+Ví dụ: 
+
+bitset <1000> mybitset; 
+
+Một số hàm trong bitset: 
+
+	. set(<vị trí>, <giá trị bit>): Thay đổi giá trị bit tương ứng tại vị trí đang xét // Độ phức tạp O(1) 
+
+Ví dụ: 
+
+bitset <1000> mybitset; // mặc định là 1000 bit 0 
+mybitset.set(10, 1);  
+    
+	. count(): Trả về số lượng bit 1 trong bitset 
+
+Ví dụ: 
+bitset <1000> mybitset; // mặc định là 1000 bit 0  // Độ phức tạp O(1) 
+mybitset.set(10, 1);  
+mybitset.set(100, 1);  
+mybitset.set(99, 1);  
+mybitset.set(50, 1);  
+cout << mybitset.count(); // xuất ra số 4 
+
+   . Những phép toán trong bitset (Độ phức tạp O(V / 32) hoặc O(V / 64) (tùy theo hệ điều hành mà máy chấm đang sử dụng) với V là số lượng bit trong bitset) 
+
+	. Phép AND (&): Xét từng bit ở vị trí tương ứng, nếu 1 trong 2 bit = 0 thì kết quả sẽ = 0, nếu cả 2 bit = 1 thì kết quả sẽ bằng 1 
+
+bitset <4> b1(1001), b2(0111); 
+bitset <4> result = b1 & b2; // result = 0001 
+
+   1001
+&
+   0111
+--------
+   0001
+
+	. Phép OR (|): Xét từng bit ở vị trí tương ứng, nếu 1 trong 2 bit = 1 thì kết quả sẽ = 1, nếu cả 2 bit = 0 thì kết quả sẽ bằng 0 
+bitset <4> b1(1001), b2(0111); 
+bitset <4> result = b1 | bt; // result = 1111
+
+	. Phép XOR (^): Xét từng bit ở vị trí tương ứng, nếu 2 bit khác nhau thì kết quả sẽ là 1, nếu 2 bit giống nhau thì kết quả sẽ là 0 
+bitset <4> b1(1001), b2(0111); 
+bitset <4> result = b1 ^ bt; // result = 1110
+
+Trong một công ty có N công nhân (1 <= N <= 5000), mỗi công nhân sẽ có 1 lịch rảnh trong tháng
+
+Có 1 dự án cần 2 công nhân. Hỏi cần chọn 2 công nhân nào để số ngày rảnh của cả 2 là nhiều nhất ??????? 
+
+N = 5 
+
+Công nhân 1: {1, 2, 5, 8, 9, 15, 16, 18, 22, 24}             
+Công nhân 2: {4, 5, 9, 10, 15, 19, 27, 30}                   
+Công nhân 3: {4, 10, 15, 16, 18, 20} 
+Công nhân 4: {2, 3, 9, 10, 13, 14, 15, 19, 21, 25, 30} 
+Công nhân 5: {1, 3, 5, 6, 9, 15, 18, 20, 25, 29, 30} 
+
+Với mỗi công nhân i, ta sẽ tạo một freeDays[i] với ý nghĩa: bit thứ j trong freeDays[i] = 0: ngày j công nhân i không rảnh, bit thứ j = 1: ngày j công nhân i rảnh.  
+
+Khai báo: 
+
+bitset <31> freeDays[5005]; 
+
+Với công nhân i và công nhân j ====> bitset <31> totalFreeDays = freeDays[i] & freeDays[j]; ===> totalFreeDays.count(): số ngày rảnh của cả 2 công nhân 
+
+O(N^2)
+
+#pragma GCC target("popcnt")  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+								
+
+
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

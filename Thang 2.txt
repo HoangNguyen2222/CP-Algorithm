@@ -1,0 +1,3722 @@
+				Tháng 2: Some techniques and algorithms
+
++ Buổi 1: Two pointers
++ Buổi 2: Binary search
++ Buổi 3: Binary search on the answer
++ Buổi 4: Binary search on float number + Ternary search
++ Buổi 5: Greedy
++ Buổi 6: Recursion + Divide and conquer
++ Buổi 7: Practice Divide and conquer
++ Buổi 8: Contest
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+			BUỔI 1
+
+Books: https://codeforces.com/problemset/problem/279/B
+
+Có N quyển sách trong 1 thư viện, quyển sách thứ i cần thời gian đọc là t[i]. Thư viện quy định thời gian tối đa
+được ở trong thư viện là T. Ta cần đọc 1 đoạn gồm các sách LIÊN TỤC sao cho tổng thời gian đọc sách không vượt quá 
+thời gian ở thư viên. Hỏi có thể đọc tối đa bao nhiêu quyển sách?
+
+N = 10, T = 30
+
+t = [5, 9, 4, 12, 8, 9, 9, 1, 10, 6] 
+
+====> 4 quyển
+
+1 <= N <= 100000, 1 <= T <= 10^9, 1 <= t[i] <= 10^4
+
+Ý tưởng ngây thơ: 
+ans = 0
+for l: 1 -> N
+  for r: 1 -> N
+    đặt sum = 0
+      for i: l -> r
+ 	sum += t[i]
+       nếu sum <= T:
+	nếu ans < r - l + 1: 
+	  ans = r - l + 1
+xuất ans
+
+O(N^3)
+
+Gọi sum[i] = t[1] + t[2] +...+ t[i]
+
+Tạo bảng sum[i] trong O(N):
+
+for i: 1 -> n
+ sum[i] = sum[i - 1] + t[i]
+
+Tổng các số từ [l....r] = sum[r] - sum[l - 1]
+
+ans = 0
+for l: 1 -> N
+  for r: 1 -> N
+    đặt sum = 0
+ 	sum = sum[r] - sum[l - 1]
+       nếu sum <= T:
+	nếu ans < r - l + 1: 
+	  ans = r - l + 1
+xuất ans
+
+O(N^2)
+
+
+******	Ý tưởng chuẩn: 
+
+Nhận xét: 
+
+Nếu tổng các số từ [l...r] > T =====> Tổng các số từ [l...r + x] > T
+
+Với mỗi vị trí i, ta hãy tìm l XA NHẤT CÓ THỂ về phía bên trái sao cho tổng thời gian đọc sách từ [l..i] <= T
+
+Ta gọi sum là tổng thời gian đọc sách từ [l...i] 
+
+sum = 0, ans = 0, l = 1
+
+for i: 1 -> n
+  sum += t[i]
+  while (sum > T): 
+    sum = sum - a[l];
+    l++;
+  ans = max(ans, i - l + 1)
+
+O(N)
+		Lời giải: 
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+ 
+int main () {
+	int n;
+	cin >> n;
+	long long t;
+	cin >> t;
+	int a[100005];
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+	}
+	int ans = 0, sum = 0, l = 1;
+	for (int i = 1; i <= n ;i++) {
+		sum += a[i];
+		while (sum > t) {
+			sum = sum - a[l];
+			l++;
+		}
+		ans = max(ans, i - l + 1);
+	}
+	cout << ans << endl;
+	return 0;
+}
+ 
+
+
+	KỸ THUẬT TWO POINTERS:
+
+Đây là 1 kĩ thuật nhằm mục đích tối ưu độ phức tạp khi ta cho 2 biến chạy tuyến tính về đích
+
+				-----------------------------------------------------------------------
+
+Spring Contest 2021 (BÀI 3): https://www.hackerrank.com/contests/seriescontest-re-up/challenges/spc3-spring-contest-2021
+
+Cho 1 dãy số a, các số trong dãy a chỉ là 0 hoặc 1. Ta được quyền thay đổi tối đa k số 0 thành số 1. Hỏi đoạn nhiều số 1 liên tục
+nhất là bao nhiêu ? 
+
+N = 12, k = 3
+
+a = [0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0]
+
+Xét đoạn [l...r], nếu ta muốn tất cả các số trong [l...r] đều là số 1 ====> có không quá k số 0 trong đoạn này
+
+Với mỗi vị trí i, ta sẽ tìm l xa i nhất có thể về phía bên trái sao cho đoạn [l...i] có không quá k số 0 
+
+Gọi countZero là số lượng số 0 trong đoạn [l...i]
+
+		Lời giải: 
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+
+int main () {
+	int t;
+	cin >> t;
+	while (t--) {
+		int n, k;
+		cin >> n >> k;
+		int a[200005];
+		for (int i = 1; i <= n; i++) {
+			cin >> a[i];
+		}
+		int countZero = 0, l = 1, ans = 0;
+		for (int i = 1; i <= n; i++) {
+			if (a[i] == 0) {
+				countZero++;
+			}
+			while (countZero > k) {
+				if (a[l] == 0) {
+					countZero--;
+				}
+				l++;
+			}
+			ans = max(ans, i - l + 1);
+		}
+		cout << ans << endl;
+	}
+	
+	return 0;
+	
+}
+
+
+
+ 				-----------------------------------------------------------------------
+  https://oj.vnoi.info/problem/minroad
+Con đường Tùng Trúc
+
+Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+
+int main () {
+	int n, a, b;
+	cin >> n >> a >> b;
+	vector < pair <int, int> >arr(300005);
+	for (int i = 1; i <= n; i++) {
+		cin >> arr[i].first >> arr[i].second;
+	}
+	sort(arr.begin() + 1, arr.begin() + n + 1);
+	int countOne = 0, countTwo = 0, l = 1;
+	int ans = 2000000000;
+	for (int i = 1; i <= n; i++) {
+		if (arr[i].second == 1) {
+			countOne++;
+		} else {
+			countTwo++;
+		}
+		while (countOne >= a && countTwo >= b) {
+			ans = min(ans, arr[i].first - arr[l].first);
+			if (arr[l].second == 1) {
+				countOne--;
+			} else {
+				countTwo--;
+			}
+			l++;
+		}
+	}
+	cout << (ans == 2000000000 ? -1 : ans) << endl;
+	return 0;
+}
+
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+
+int main () {
+	int n, a, b;
+	cin >> n >> a >> b;
+	vector < pair <int, int> >arr(n);
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i].first >> arr[i].second;
+	}
+	sort(arr.begin() , arr.end());
+	int countOne = 0, countTwo = 0, l = 0;
+	int ans = 2000000000;
+	for (int i = 0; i < n; i++) {
+		if (arr[i].second == 1) {
+			countOne++;
+		} else {
+			countTwo++;
+		}
+		while (countOne >= a && countTwo >= b) {
+			ans = min(ans, arr[i].first - arr[l].first);
+			if (arr[l].second == 1) {
+				countOne--;
+			} else {
+				countTwo--;
+			}
+			l++;
+		}
+	}
+	cout << (ans == 2000000000 ? -1 : ans) << endl;
+	return 0;
+}
+
+
+
+
+
+
+
+				-----------------------------------------------------------------------
+https://codeforces.com/gym/101201 (bài C)
+
+Cameras:
+
+countCameras: số lượng camera hiện có trong đoạn ta đang xét. 
+
+haveCamera[x]:  haveCamera[x] = true nếu ngôi nhà x đã có gắn camera
+
+ans: số lượng camera tối thiểu cần gắn
+
+Lời giải: 
+
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+int haveCam[100005];
+int n, k, consecutive;
+int main () {
+	cin >> n >> k >> consecutive;
+	for (int i = 1; i <= k; i++) {
+		int house;
+		cin >> house;
+		haveCam[house] = 1;
+	}
+	int l = 1;
+	int r = consecutive;
+	int numCam = 0;
+	for (int i = l; i <= r; i++) {
+		if (haveCam[i] == 1) {
+			numCam++;
+		}
+	}
+	int ans = 0;
+	if (numCam < 2) {
+		for (int i = 1; i <= 2 - numCam; i++) {
+			for (int j = r; j >= l; j--) {
+				if (haveCam[j] == 0) {
+					haveCam[j] = 1;
+					ans++;
+					break;
+				}
+			}
+		}
+		numCam = 2;
+	}
+	for (int i = r + 1; i <= n; i++) {
+		if (haveCam[i] == 1) {
+			numCam++;
+		}
+		if (haveCam[l] == 1) {
+			numCam--;
+		}
+		l++;
+		if (numCam < 2) {
+			haveCam[i] = 1;
+			ans++;
+			numCam = 2;
+		}
+	}
+	cout << ans;
+	return 0;	
+}
+ 
+  
+
+
+				-----------------------------------------------------------------------
+
+Ferris Wheel https://cses.fi/problemset/task/1090/
+
+Có N học sinh muốn chơi đu quay, bạn thứ i có trọng lượng là w[i]. Một đu quay có sức chứa tối đa là W và 1 đu quay chỉ chứa được tối đa 2
+bạn
+Hỏi cần tối thiểu bao nhiêu đu quay để toàn bộ N bạn học sinh có thể chơi được.
+
+N = 9, W = 10
+
+[4, 2, 9, 8, 6, 10, 3, 1, 10]
+
+ sắp xếp theo thứ tự tăng dần
+
+[1, 2, 3, 4, 6, 8, 9, 10, 10]
+
+Xét a[i] và a[j]
+
+while i <= j:
+ Nếu a[i] + a[j] <= W:
+   i++;
+  ans++;
+  j--; 
+Lời giải: 
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+using namespace std;
+int n;
+long long x;
+int a[200005];
+int main () {
+	
+	cin >> n >> x;
+	
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+	}
+	sort (a + 1, a + n + 1);
+	int l = 1, r = n;
+	int count = 0;
+	while (l <= r) {
+		count++;
+		if (a[l] + a[r] <= x) {
+			l++;
+		}
+		r--;
+	}
+	cout << count << endl;
+	return 0;
+}
+				-----------------------------------------------------------------------
+
+Mex Maximizing: https://codeforces.com/problemset/problem/1294/D 
+
+Định nghĩa là Mex của 1 dãy số là nguyên không âm nhỏ nhất có thể sao cho số đó không xuất hiện trong dãy
+
+Ví dụ: 
+
+Mex([1, 2, 3]) = 0
+Mex([0, 1, 5, 9]) = 2
+Mex([0, 1, 2, 3]) = 4
+
+Ta có dãy a là 1 dãy số rỗng
+Có Q yêu cầu, mỗi yêu cầu gồm 1 con số v, ta thêm số v vào dãy a
+
+Ta thực hiện thay đổi những số trong dãy a bằng cách như sau: 
+
+Chọn một số a[i] bất kỳ, tăng thêm 1 lượng là x hoặc giảm 1 lượng là x (thực hiện bao nhiêu lần cũng được và a[i] không được phép âm)
+
+Hỏi: Mex lớn nhất có thể sau mỗi lần thêm số v là bao nhiêu ???
+
+Q = 8, x = 4
+7
+100
+9
+5
+18
+18
+5
+4
+
+
+
+a = [ ]
+ thêm số 7
+
+a = [ 7], Mex = 0
+thêm số 100
+(dùng 100 - x 25 lần)
+a = [7, 0], Mex = 1
+thêm số 9
+(dùng 9 - x 2 lần)
+a = [7, 0, 1], Mex = 2
+thêm số 5
+
+a = [7, 0, 1, 5], Mex = 2
+thêm số 18
+
+a = [3, 0, 1, 5, 2], Mex = 4
+thêm số 18
+
+a = [3, 0, 1, 5, 2, 18], Mex = 4
+thêm số 5
+
+a = [3, 0, 1, 5, 2, 18, 5], Mex = 4 
+thêm số 4
+
+a = [3, 0, 1, 5, 2, 6, 5, 4], Mex = 7
+
+
+Nhận xét 1: 
+
+Càng nhiều càng số trong dãy a thì Mex hoặc đứng yên hoặc tăng thêm
+
+Nhận xét 2: 
+
+x = 4
+17 ------> 1001 (17 % 4 == 1, 1001 % 4 == 1)
+
+26 ------> 1000002 (26 % 4 == 2, 1000002 % 4 == 2)
+
+
+v, v + x, v + 2x, v + 3x
+
+1, 5, 9, 13, 17, 21,..........
+
+u có thể biến đổi thành v nếu u % x == v % x
+
+Q = 8, x = 4
+7
+100
+9
+5
+18
+18
+5
+4
+
+Mex = 0
+
+count[r]: số lượng số có số dư là r khi chia cho x mà CHƯA ĐƯỢC SỬ DỤNG
+
+7, count[3] = 1
+
+Mex = 0 ===> Xuất ra số 0 
+
+100, count[0] = 1, count[3] = 1
+
+Mex = 0 -> 1, count[0] = 0, Mex = 1
+Mex = 1 ====> Xuất ra số 1
+
+9, count[1] = 1, count[3] = 1
+
+Mex = 1 -> 2, count[1] = 0, Mex = 2
+Mex = 2 ===> Xuất ra số 2
+
+5, count[1] = 1, count[3] = 1
+Mex = 2 ====> Xuất ra số 2
+
+18, count[2] = 1, count[1] = 1, count[3] = 1
+Mex = 2 -> 3, count[2] = 0, Mex = 3
+Mex = 3 -> 4, count[3] = 0, Mex = 4
+Mex = 4 ====> Xuất ra số 4
+
+Lời giải:
+
+
+				
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+							BUỔI 2
+
+
+
+Binary Search (Tìm kiếm nhị phân)
+
+Xét bài toán tìm kiếm
+
+Bài toán tìm kiếm là một bài toán rất căn bản trong thuật toán 
+
+Xét một dãy số a gồm N số, cho một số x, hỏi số x xuất hiện ở vị trí nào trong dãy a????
+
+a = [8, 1, 2, 9, 4, 6, 3, 7, 5], x = 6
+
+==========> 6
+
+
+Xét bài toán tìm kiếm nhưng dãy a đã được sắp xếp tăng dần
+
+a = [1, 2, 3, 4, 5, 6, 7, 8, 9], x = 6
+
+Trong tình huống xấu nhất, số lần tìm kiếm thực hiện trong tối đa log(N) thao tác
+
+Nếu N = 1 triệu ====> log(N) ~ 18 thao tác tìm kiếm
+
+lo = 1
+hi = n
+while lo <= hi
+ đặt mid = (lo + hi)/ 2
+ nếu a[mid] == x;
+   báo cáo kết quả là mid
+   dừng thuật toán
+ else nếu a[mid] < x
+    lo = mid + 1;
+ else 
+    hi = mid - 1;
+
+Báo cáo phần tử x không xuất hiện trong dãy số a
+
+
+mid = (lo + hi)/ 2
+
+mid = lo + (hi - lo)/ 2   (KHÔN LỎI)
+
+Khai báo lo và hi là 2 giá trị int
+
+lo = 1 tỷ, hi = 2 tỷ
+
+mid = (lo + hi) / 2 =====> tràn số
+
+					-----------------------------------------------------------------------
+
+https://cses.fi/problemset/task/1640
+
+Sum of Two Values
+
+Cho một dãy số a gồm N số nguyên dương. Ta cần chọn ra 2 số i, j sao cho a[i] + a[j] = x. Hãy xuất ra i, j
+
+N = 5, x = 10
+a = [2, 9, 1, 4, 3]
+
+====> 2 3
+
+Lưu dãy a thành dãy b, mỗi phần tử trong dãy b gồm 2 thông số là <a[i], i>
+
+b = [<2, 1>, <9, 2>, <1, 3>, <4, 4>, <3, 5>]
+
+b = [<1, 3>, <2, 1>, <3, 5>, <4, 4>, <9, 2>]
+
+Với mỗi b[i], ta cần tìm b[j] sao cho b[i].first + b[j].first = x
+
+Duyệt i: 1 -> n
+   Ta cần tìm j sao cho b[i].first + b[j].first = x
+   <=> b[j].first = x - b[i].first
+
+Lời giải: 
+
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+int n, x;
+int a[200005];
+vector < pair <int ,int> > b(200005);
+int main () {
+	cin >> n >> x;
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+		b[i].first = a[i];
+		b[i].second = i;
+	}
+	sort (b.begin() + 1, b.begin() + n + 1);
+	for (int i = 2; i <= n; i++) {
+		int lo = 1;
+		int hi = i - 1;
+		while (lo <= hi) {
+			int mid = (lo + hi) / 2;
+			if (b[mid].first == x - b[i].first) {
+				cout << b[mid].second << ' ' << b[i].second;
+				return 0;
+			} else if (b[mid].first < x - b[i].first) {
+				lo = mid + 1;
+			} else {
+				hi = mid - 1;
+			}
+		}	
+	}
+	cout << "IMPOSSIBLE" << endl;
+	return 0;
+}
+ 
+  
+					-----------------------------------------------------------------------
+
+http://lequydon.ntucoder.net/Problem/Details/4702
+
+Unlock
+
+Có N ổ khóa số và mỗi ổ khóa có các số từ 1 -> M
+
+Hãy xoay toàn bộ N ổ khóa về thành 1 con số
+
+Một thao tác xoay sẽ xoay như sau: 
+
+Xoay từ u -> u + 1 hoặc u - 1. Nếu u = 1, ta có thể xoay về M, nếu u = M, ta có thể xoay về 1
+
+Hỏi số lượng thao tác ít nhất để xoay toàn bộ N ổ khóa về thành 1 số là bao nhiêu ? 
+
+N = 15
+
+a = [1, 1, 2, 3, 5, 6, 7, 9, 9, 9, 10, 12, 13, 13, 15, 17, 18, 20]
+
+
+Nhận xét: Các ổ khóa nên xoay về con số a[i] nào đó với i từ 1 -> N
+======> sắp xếp các ổ khóa tăng dần theo a[i]
+
+Với mỗi số a[i], ta cần tính số nấc tối thiểu để các ổ khóa a[1], a[2], ..., a[N] cùng xoay về a[i]
+
+Xét a[i]
+
+Xét các số a[1], a[2], ...., a[i - 1], ta gọi p là chỉ số để a[p], a[p + 1], ......, a[i - 1] xoay về a[i] theo chiều thuận
+========> a[1], a[2],....., a[p - 1] xoay theo chiều nghịch
+
+Số nấc để xoay theo chiều thuận sẽ không quá M / 2
+
+a[i] - a[p] <= M / 2
+a[i] - a[p + 1] <= M / 2
+......
+
+========> Ta cần tìm p nhỏ nhất có thể để a[i] - a[p] <= M / 2 <=> a[p] >= a[i] - M / 2
+lo = 1, hi = i - 1, p = -1
+
+while lo <= hi
+ đặt mid = (lo + hi) / 2
+ nếu a[mid] >= a[i] - M/2
+    p = mid
+    hi = mid - 1
+ else 
+    lo = mid + 1
+					-----------------------------------------------------------------------
+
+SC5(Summer Contest 2019)
+
+Có 2 rô bốt đỏ và xanh. Rô bốt đỏ sẽ được yêu cầu lau A ô, rô bốt xanh được yêu cầu lau B ô tiếp theo.
+
+Hỏi: Khoảng cách Manhathan giữa rô bốt đỏ và rô bốt xanh (sau khi lau nhà xong là bao nhiêu) ?????
+
+Khoảng cách Manhathan giữa 2 điểm A(xA, yA) và B(xB, yB) là: 
+
+dist(A, B) =  |xA - xB| + |yA - yB|
+
+1 <= N, M, A, B <= 10^18
+
+Ta gọi 1 hàm calc(X) là hàm trả về tọa độ mà rô bốt lau nhà đang đứng sau khi lau X ô
+
+Ta tìm vị trí của hàng mà rô bốt đó đang đứng bằng nhận xét: 
+
+Nếu rô bốt đứng tại hàng X ===> Tất cả những hàng từ 1 -> x - 1, rô bốt đó đã đi hết.
+
+Ta sẽ tìm giá trị x nhỏ nhất có thể sao cho (x - 1) * M < A
+
+x là 1 con số nằm trong đoạn [1...N]
+
+đặt lo = 1, hi = N 
+
+đặt mid = (lo + hi) / 2
+Hàng mid thỏa khi (mid - 1) * M < X:
+   x = mid 
+   lo = mid + 1
+else : 
+   hi = mid - 1
+
+Ta tính số ô lau trên hàng x: v = X - (x - 1) * M		
+
+Nếu x lẻ:
+   y = v
+else:
+   y = M - v + 1
+
+			Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+long long N, M, A, B;
+int numTest;
+
+pair <long long, long long> calc(long long N, long long M, long long A) {
+    long long lo = 1;
+    long long hi = N;
+    long long row = 1;
+    while (lo <= hi) {
+        long long mid = (lo + hi) / 2;
+        long long res = (mid - 1) * M;
+        if (res < A) {
+            row = mid;
+            lo = mid + 1;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    long long col;
+    A = A - (row - 1) * M;
+    if (row % 2 != 0) {
+        col = A;
+    } else {
+        col = M - A + 1;
+    }
+    return make_pair(row, col);
+}
+ 
+int main () {
+    cin >> numTest;
+    for (int testCase = 1; testCase <= numTest; testCase++) {
+        cin >> N >> M >> A >> B;
+        N = min(N, (A + B) / M + 1); //dòng này đúng ra sẽ không cần, do bộ test trên series contest bị sai
+        pair <long long, long long> pointA = calc(N, M, A);
+        pair <long long, long long> pointB = calc(N, M, A + B);
+        cout << abs(pointA.first - pointB.first) + abs(pointA.second - pointB.second) << endl;    
+    }
+    return 0;
+} 
+  
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+				
+	
+
+				BUỔI 3
+
+		BINARY SEARCH ON THE ANSWER
+
+Array Division (Bài toàn thực tiễn của công ty Hasbro)
+	https://cses.fi/problemset/task/1085
+
+Cho một mảng a gồm các số nguyên dương, ta gom các phần tử liên tục thành 1 nhóm sao cho đủ k nhóm. Hỏi chia như 
+thế nào để nhóm có tổng lớn nhất là nhỏ nhất có thể ??
+
+1 <= N <= 100000, 1 <= k <= 100000
+
+N = 14, k = 3
+
+a = [5, 2, 9, 1, 10, 4, 6, 8, 12, 4, 7, 8, 7, 2]	
+
+W = 20 
+
+Nhận xét: Giả sử giới hạn tổng các phần tử trong 1 nhóm không được vượt quá con số W ========> W càng lớn càng dễ chia, càng nhỏ càng 
+khó chia.
+
+Giả sử giới hạn tổng tối đa của mỗi nhóm là W
+
+W là 1 con số nào đó từ 1 -> a[1] + a[2] + ...+ a[N]
+
+ta đặt lo = 1, hi = a[1] + a[2] + ...+ a[N]
+
+ta đặt mid = (lo + hi) / 2
+
+ta cần xem xét số lượng nhóm tối đa có thể chia với giới hạn tổng tối đa là mid
+
+Nếu số lượng nhóm có thể chia <= k 
+    ghi nhận ans = mid 
+    hi = mid - 1
+else:
+    lo = mid + 1
+
+
+
+			Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+int n, k;
+long long a[200005];
+int main () {
+	cin >> n >> k;
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+	}
+	long long lo = 1;
+	long long hi = 2000000000000007LL;
+	long long ans = 0LL;
+	while (lo <= hi) {
+		long long mid = (lo + hi) / 2;
+		int array = 0;
+		long long sum = 10000000000000007LL;
+		int check = 1;
+		for (int i = 1; i <= n; i++) {
+			if (a[i] > mid) {
+				check = 0;
+				break;
+			}
+			if (sum + a[i] <= mid) {
+				sum += a[i];
+			} else {
+				sum = a[i];
+				array++;
+			}
+		}
+		if (check == 0 || array > k) {
+			lo = mid + 1;
+		} else {
+			ans = mid;
+			hi = mid - 1;
+		}
+	}
+	cout << ans << endl;
+	return 0;
+} 
+ 
+					-----------------------------------------------------------------------
+Workout: https://codingcompetitions.withgoogle.com/kickstart/round/000000000019ffc7/00000000001d3f5b
+
+Có N bài tập thể dục, bài tập thứ i sẽ có độ khó là a[i] (a tăng dần)
+
+Độ khó của cả khóa học thể dục là = chênh lệch độ khó giữa 2 bài tập liên tục 
+
+Ta có thể thêm tối đa K bài tập thể dục nữa (độ khó tùy chọn) sao cho vẫn bảo đảm độ khó của các bài là tăng dần
+
+Hỏi độ khó của cả khóa học tối thiểu có thể đạt được là bao nhiêu ?????????
+
+
+N = 5, k = 2
+
+2 8 9 13 17 ========> độ khó = 6 
+
+2 6 8 9 13 15 17  =====> độ khó = 4 
+
+
+
+Nhận xét: 
+
+Độ khó của cả khóa học càng lớn thì càng dễ để thêm 1 số bài tập thể dục để thỏa mãn độ khó đó.
+
+Kết quả bài toán là một con số nào đó nằm trong đoạn [1...max(a[i + 1] - a[i])]
+
+Khi ta có kết quả là mid, ta cần đếm có bao nhiêu bài thể dục cần thêm để độ khó = mid ????
+
+Tính số lượng bài thể dục cần thêm: 
+ Nếu chênh lệch giữa 2 bài liên tục % mid == 0 thì 
+
+		số lượng bài thể dục cần thêm += (chênh lệch giữa 2 bài liên tục / mid) - 1;
+
+	else :  
+		số lượng bài thể dục cần thêm += (chênh lệch giữa 2 bài thể dục % mid);	
+
+Nếu số lượng bài thể dục cần thêm <= k
+    ans = mid
+    hi = mid - 1
+else: 
+    lo = mid + 1
+
+Độ phức tạp: O(log(1 tỷ) * N) ~ O(28N)
+
+
+
+		Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+using namespace std;
+int numTest;
+int n, k;
+int a[100005];
+int main () {
+	cin >> numTest;
+	for (int i = 1; i <= numTest; i++) {
+		cin >> n >> k;
+		for (int i = 1; i <= n; i++) {
+			cin >> a[i];
+		}
+		cout << "Case #" << i << ": ";
+		int lo = 1;
+		int hi = 1000000005;
+		int ans = 0;
+		while (lo <= hi) {
+			int mid = (lo + hi) / 2;
+			int countEx = 0;
+			for (int i = 1; i < n; i++) {
+				int diff = a[i + 1] - a[i];
+				if (diff % mid == 0) {
+					countEx += ((diff / mid) - 1);
+				} else {
+					countEx += (diff / mid);
+				}
+			}
+			if (countEx <= k) {
+				ans = mid;
+				hi = mid - 1;
+			} else {
+				lo = mid + 1;
+			}
+		}
+		cout << ans << endl;
+	}
+	return 0;
+} 
+ 
+
+					-----------------------------------------------------------------------
+
+Move 12:  https://vn.spoj.com/problems/MOVE12/
+
+Cho một bản đồ thành phố dược xem như là một ma trận gồm N hàng N cột
+
+Mỗi hàng sẽ có 1 ông cảnh sát, ông cảnh sát này có thể ở bất kỳ cột nào. Mỗi ông cảnh sát sẽ có 1 khoảng thời gian di chuyển là t[i]
+(sau t[i] giây, ông cảnh sát này sẽ có thể di chuyển từ cột đang đứng sang 1 cột bên trái hoặc bên phải)
+
+Ta muốn toàn bộ N ông cảnh sát, mỗi ông thống trị 1 cột, hỏi thời gian tối thiểu là bao nhiêu ?????
+
+Nhận xét: 
+
+Giả sử ta chấp nhận cho những ông cảnh sát chạy nhưng với giới hạn thời gian là T
+
+==========> T càng nhỏ =========> những ông cảnh sát càng khó để thực hiện
+
+Thời gian T là 1 giá trị nằm trong đoạn [0....10^8]
+
+1 <= t[i] <= 10^4, 1 <= n <= 10^4
+
+Giả sử tất cả các ông cảnh sát đều đứng ở cột 1 và đều có thời gian là t[i] = 10^4
+
+					-----------------------------------------------------------------------
+Max Median: 
+
+Cho một dãy số a gồm N số nguyên dương.
+
+Định nghĩa "Median" là phần tử trung vị của dãy a (nếu ta sắp xếp dãy a tăng dần thì Median là phần tử nằm chính giữa của dãy a)
+
+a = [1, 2, 1, 5, 9, 4]
+
+a = [1, 1, 2, 4, 5, 9] ====> Median = 2
+
+a = [5, 9, 1, 4, 4, 3, 7]
+
+a = [1, 3, 4, 4, 5, 7, 9] ===> Median = 4
+
+Xét tất cả các dãy số là dãy con của a, các dãy có số lượng phần tử >= K, hỏi Median lớn nhất bằng bao nhiêu ????
+
+a = [1, 2, 1, 5, 9, 4]
+K = 4
+
+Các dãy có số lượng phần tử >= 4: 
+
+1, 2, 1, 5 => 1
+2, 1, 5, 9 => 2
+1, 5, 9, 4 => 4
+1, 2, 1, 5, 9 => 2
+2, 1, 5, 9, 4 => 4
+1, 2, 1, 5, 9, 4 => 2
+
+========> 4
+
+Giả sử đáp án là mid, ta hỏi xem có tồn tại 1 dãy số nào đó sao cho số lượng số >= mid áp đảo so với số lượng số < mid và dãy số
+
+đó có số lượng phần tử >= K hay không
+
+a = [1, 2, 1, 5, 9, 4]
+K = 4
+
+mid = 3, ans = mid
+
+Ta tạo dãy số b với ý nghĩa: 
+b[i] = 0 nếu a[i] < mid, b[i] = 1 trong trường hợp ngược lại 
+
+b = [0, 0, 0, 1, 1, 1]
+
+1 đoạn [l....r] sẽ thỏa nếu số lượng số 1 > r - l + 1 - số lượng số 1
+
+sum[i] = b[1] + b[2] +....+ b[i]
+
+=====> 1 đoạn [l....r] sẽ thỏa mãn nếu: sum[r] - sum[l - 1] > r - (l - 1) - (sum[r] - sum[l - 1])
+
+<=> 2 * sum[r] - r > 2 * sum[l - 1] - (l - 1)
+
+1 đoạn [l...r] thỏa mãn nếu: 
+
+. r - (l - 1) >= K
+. 2 * sum[r] - r > 2 * sum[l - 1] - (l - 1)
+
+for i: k -> n
+  for j: 0 -> i - k:
+   nếu 2 * sum [i] - i > 2 * sum[j] - j:
+    =====> kết luận mid thỏa mãn
+
+Giả sử ta có sum[0], sum[1], sum[2], sum[3], sum[4], sum[5], sum[6], sum[7], sum[8], sum[9], sum[10]
+K = 4
+
+Với sum[4] ====> ta so sánh 2 * sum[4] - 4 > 2 * sum[0] - 0
+Với sum[5] ====> ta so sánh 2 * sum[5] - 5 > min(2 * sum[0] - 0, 2 * sum[1] - 1)
+Với sum[6] ===> ta so sánh 2 * sum[6] - 6 > min(2 * sum[0] - 0, 2 * sum[1] - 1, 2 * sum[2] - 2)
+
+Ta gọi minValue là giá trị nhỏ nhất của các 2 * sum[j] - j
+
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+minValue = 2 * sum[0] - 0
+
+Duyệt i = K -> N
+  Nếu 2 * sum[i] - i > minValue: 
+      Báo cáo mid thỏa
+   minValue = min(minValue, 2 * sum[i - k + 1] - (i - k + 1))
+
+Báo cáo mid không thỏa
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+						BUỔI 4
+				 BINARY SEARCH ON FLOAT NUMBER + TERNARY SEARCH
+
+
+Rate: https://oj.vnoi.info/problem/olp304_18_rate
+
+Có một dãy số a gồm các số nguyên dương. Xét tất cả những dãy số có số lượng phần tử >= K, hỏi dãy nào có trung bình cộng lớn nhất ??????
+
+a = [5, 1, 9, 2, 4, 6, 3]
+
+K = 4
+
+5, 1, 9, 2 =====> 4.25
+1, 9, 2, 4 ====> 4
+9, 2, 4, 6 ====> 5.25
+2, 4, 6, 3 =====> 3.75
+5, 1, 9, 2, 4 ===> 4.2
+1, 9, 2, 4, 6 ===> 4.4
+9, 2, 4, 6, 3 ===> 4.8
+5, 1, 9, 2, 4, 6 => 4.5
+1, 9, 2, 4, 6, 3 ===> 4.1666666667
+5, 1, 9, 2, 4, 6, 3 ===> 30/7
+
+
+Giả sử giá trị trung bình ta mong muốn là avg ========> Hỏi có tồn tại 1 dãy số [l.....r] có (r - l + 1) >= K và (a[l] + a[l + 1] + 
+...... + a[r]) / (r - l + 1) >= avg
+
+Ta có : 
+(a[l] + a[l + 1] + ...+ a[r]) / (r - l + 1) >= avg
+
+<=> a[l] + a[l + 1] +...+ a[r] >= (r - l + 1) * avg
+
+<=>a[l] + a[l + 1] +.....+a[r] >= avg + avg + avg +....+avg    //(r - l + 1) lần 
+
+<=> (a[l] - avg) + (a[l + 1] - avg) +...+ (a[r] - avg) >= 0
+
+========> Ta tạo 1 dãy số b với ý nghĩa:
+
+b[i] = a[i] - avg
+
+
+==========> bài toán đưa về: Hỏi có tồn tại 1 dãy số [l.....r] sao cho
+
+. r - l + 1 >= K
+. b[l] + b[l + 1] +...+ b[r] >= 0
+
+Ta đặt sum[i] = b[1] + b[2] +...+ b[i]
+
+. r - l + 1 >= K
+. sum[r] - sum[l - 1] >= 0
+
+<=> sum[r] >= sum[l - 1]
+
+Đặt i = r, j = l - 1 .Hỏi có tồn tại 2 chỉ số i và j sao cho
+
+. i - j >= K
+. sum[i] >= sum[j]
+
+sum[0], sum[1], sum[2], sum[3], sum[4], sum[5], sum[6], sum[7], sum[8], sum[9], sum[10]
+
+K = 4
+
+avg là 1 con số nằm trong đoạn [0...max(a[1], a[2], ....,a[n])]. Vì trung bình cộng sẽ không bao giờ vượt quá con số lớn nhất trong dãy
+
+lo = 0, hi = max(a[1], a[2], ....a[n])
+
+for step: 1 -> 100 
+  đặt mid = (lo + hi) / 2
+  gán avg = mid
+  nếu avg thỏa: 
+     ans = avg
+     lo = mid
+  else:
+     hi = mid
+		Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+
+using namespace std;
+int n, k;
+double a[300005];
+double sum[300005];
+int main () {
+	cin >> n >> k;
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+	}
+	double lo = 0.0;
+	double hi = 100000.00000;
+	for (int i = 1; i <= 500; i++) {
+		double mid = (lo + hi) / 2.0;
+		for (int j = 1; j <= n; j++) {
+			double b = a[j] - mid;
+			sum[j] = sum[j - 1] + b;
+		}
+		double minVal = 0.0;
+		int check = 0;
+		for (int x = k; x <= n; x++) {
+			minVal = min(minVal, sum[x - k]);
+			if (sum[x] >= minVal) {
+				check = 1; 
+				break;
+			}
+		}
+		if (check == 0) {
+			hi = mid;
+		} else {
+			lo = mid;
+		}
+	}
+	cout << fixed << setprecision(6) << lo << endl;
+	return 0;	
+} 
+  
+
+					-----------------------------------------------------------------------
+
+Martian Programmer
+
+Một người công nhân làm việc, ta biết năng suất làm việc của anh ta sẽ tỉ lệ thuận so với số giờ ngủ của anh ta
+
+Trong H/6 giờ đầu tiên, năng suất làm việc của anh ta sẽ từ 0% -> A%
+Nếu ngủ từ H/6 giờ -> H/3 giờ, năng suất làm việc tăng từ A% -> 100%
+Nếu số giờ ngủ >= H/3 ====> năng suất làm việc là 100%
+
+Hiệu suất làm việc = năng suất * số giờ thức
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+					BUỔI 5
+
+					GREEDY
+
+	Đây là 1 kỹ thuật ta tính kết quả bài toán dựa vào việc nếu ta thấy có thể chọn đáp án thỏa mãn thì tiếp tục chọn
+
+=======> nhược điểm của tham lam: Trong 1 số bài toán, tham lam chưa chắc đã đưa ra kết quả tối ưu.
+
+
+					-----------------------------------------------------------------------
+
+Nối điểm đen trắng: https://oj.vnoi.info/problem/bwpoints
+
+		Lời giải:
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+using namespace std;
+int n;
+vector < pair <int, int> > a(200005);
+int main () {
+	cin >> n;
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i].first;
+		a[i].second = 0;
+	}
+	for (int i = n + 1; i <= 2*n; i++) {
+		cin >> a[i].first;
+		a[i].second = 1;
+	}
+	int ans = 0;
+	sort(a.begin() + 1, a.begin() + 1 + 2*n);
+	for (int i = 1; i < 2*n; i++) {
+		if (a[i].first != a[i + 1].first && a[i].second != a[i + 1].second) {
+			ans++;
+			i++;
+		}
+	}
+	cout << ans << endl;
+	return 0;
+}
+ 
+	
+					-----------------------------------------------------------------------
+
+AC6 (Autumn Contest 2019)
+
+Cho N viên kẹo, mỗi viên kẹo sẽ có màu là c[i] và có độ ngon là v[i]
+
+Có M đứa trẻ. Ta sẽ phát cho mỗi đứa trẻ 2 viên kẹo sao cho mỗi đứa trẻ có 2 viên khác màu nhau. Hỏi tổng độ ngon lớn nhất là bao nhiêu???
+
+N = 10, M = 3
+
+3 5
+2 8
+2 4
+1 3
+3 6
+3 9
+2 1
+3 5
+7 4
+3 10
+
+Gợi ý: Khi ta có 2 * M viên kẹo, dấu hiệu để có thể chia mỗi đứa trẻ có 2 viên khác màu
+
+M = 3
+
+Trong 6 viên, không được phép có nhiều hơn 3 viên cùng màu
+
+Trong 2 * M viên, không được phép có nhiều hơn M viên cùng màu
+ ví dụ:
+	M = 3
+	4 viên đỏ, 1 viên xanh, 1 viên vàng 
+
+1 tập kẹo có thể chia được nếu số lượng viên cùng màu không được phép > M
+
+Sắp xếp theo tứ tự độ ngon giảm dần
+
+Gọi ans là tổng độ ngon lớn nhất
+Gọi countColor[c] là số lượng viên kẹo có màu c
+Gọi numbCandies: số lượng viên kẹo đã chọn tính đến thời điểm hiện tại
+
+		Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+using namespace std;
+bool cmp (pair <int, int> a, pair <int, int> b) {
+	return (a.second > b.second);
+}
+int numTest;
+int n, k;
+pair <int, int> candy[55];
+int countSameColor[55];
+int main () {
+	cin >> numTest;
+	for (int testCase = 1; testCase <= numTest; testCase++) {
+		cin >> n >> k;
+		for (int i = 1; i <= n ; i++) {
+			cin >> candy[i].first >> candy[i].second;
+		}
+		sort(candy + 1, candy + n + 1, cmp);
+		for (int i = 1; i <= 50; i++) {
+			countSameColor[i] = 0;
+		}
+		int ans = 0;
+		int numCandies = 0;
+		for (int i = 1; i <= n; i++) {
+			if (numCandies == 2 * k) {
+				break;
+			}
+			if (countSameColor[candy[i].first] < k) {
+				countSameColor[candy[i].first]++;
+				ans += candy[i].second;
+				numCandies++;
+			}
+		}
+		if (numCandies != 2 * k) {
+			cout << -1 << endl;
+		} else {
+			cout << ans << endl;
+		}
+	}
+	return 0;
+} 
+
+  
+					-----------------------------------------------------------------------
+
+Friends and restaurant: https://codeforces.com/contest/1729/problem/D
+
+Có N người bạn muốn đi ăn nhà hàng. Người bạn thứ i sẽ muốn kêu món có giá tiền là x[i] và trong ví thì có số tiền là y[i].
+Những người bạn này sẽ không muốn đi ăn 1 mình. Một nhóm sẽ thỏa mãn nếu tổng tiền có thể trả >= tổng tiền ăn. Hỏi có thể lập ra tối đa
+bao nhiêu nhóm ??
+
+N = 10
+
+5 2
+4 10 
+1 3
+9 1
+5 5 
+3 1
+6 2
+7 11
+4 4 
+2 3
+
+Nhóm 1: <5, 5>, <4, 4>
+Nhóm 2: <1, 3>, <3, 1>
+
+Nhận xét: Các nhóm chỉ nên có đúng 2 người
+
+Nếu nhóm có 3 người
+
+1 nghèo - 2 giàu ====> cắt bớt 1 giàu qua nhóm khác
+
+2 nghèo- 1 giàu ====> bỏ bớt 1 nghèo	
+
+	Lời giải: 
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+using namespace std;
+int numTest;
+int n;
+int x[100005], y[100005];
+int finance[100005];
+int main () {
+	cin >> numTest;
+	for (int testCase = 1; testCase <= numTest; testCase++) {
+		cin >> n;
+		for (int i = 1; i <= n; i++) {
+			cin >> x[i];
+		}
+		for (int i = 1; i <= n; i++) {
+			cin >> y[i];
+		}
+		for (int i = 1; i <= n; i++) {
+			finance[i] = y[i] - x [i];
+		}
+		sort(finance + 1, finance + 1 + n);
+		int l = 1, r = n;
+		int ans = 0;
+		while (l < r) {
+			if (finance[l] + finance[r] >= 0) {
+				ans++;
+				r--;
+			}
+			l++;
+		}	
+		cout << ans << endl;
+	}
+	return 0;
+}
+ 
+
+
+
+					-----------------------------------------------------------------------
+
+
+Two Sets: https://cses.fi/problemset/task/1092
+
+Cho số N, xét các số tự nhiên từ 1 -> N. Hỏi có thể phân N số thành 2 tâp hợp sao cho tổng của 2 tập hợp bằng nhau hay không ???
+
+N = 8
+
+1 2 3 4 5 6 7 8 
+
+Tập hợp 1: 1 2 3 4 8
+Tập hợp 2: 5 6 7
+
+		Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+using namespace std;
+
+long long n;
+long long sum = 0;
+
+int main () {
+	cin >> n;
+	for (int i = 1; i <= n; i++) {
+		sum += i;
+	}
+	if (sum % 2 == 0) {
+		cout << "YES" << endl;
+		long long x = sum / 2;
+		long long count = 0;
+		vector <int> a, b;
+		while (x > 0) {
+			for (int i = n; i >= 1; i--) {
+				if (x >= i) {
+					x -= i;
+					count++;
+					a.push_back(i);
+				} else {
+					b.push_back(i);
+				}
+			}
+		}
+		cout << count << endl;
+		for (int i = 0; i < (int)a.size(); i++) {
+			cout << a[i] << ' ';
+		}
+		cout << endl;
+		cout << n - count << endl;
+		for (int i = 0; i < (int)b.size(); i++) {
+			cout << b[i] << ' ';
+		}
+	} else {
+		cout << "NO" << endl;
+	}
+	return 0;
+} 
+
+
+					-----------------------------------------------------------------------
+
+Shortest Subsequence: https://cses.fi/problemset/task/1087/
+
+Cho một chuỗi DNA gồm 4 loại nucleotit {'A', 'C', 'G', 'T'}. Hãy tạo ra 1 chuỗi DNA có độ dài ngắn nhất mà chuỗi này không xuất hiện
+trong chuỗi DNA ban đầu dưới dạng một "chuỗi con"
+
+Một "chuỗi con" của chuỗi s là chuỗi được tạo thành bằng việc xóa đi một vài ký tự trong chuỗi s
+
+s = "ACCGTCAGGTA"
+
+Một số chuỗi con: "AG", "AGTA", .............
+
+=======> Xuất ra chuỗi "AAAA
+
+Xuất ra chuỗi "CAC"
+
+Ý tưởng: cố gắng chọn chữ cái càng xa về đằng sau càng tốt, xét từng chữ cái, rồi xét vị trí lần đầu tiên xuất hiện trong chuỗi, rồi chọn
+chữ cái có lần xuất hiện xa nhất, rồi từ chữ cái có vị trí xuất hiện xa nhất trong lần xét đầu tiên, tiếp tục xét và chọn chữ cái có vị trí
+xuất hiện xa nhất có thể.
+	Tạo 4 hàng đợi để lưu các vị trí xuất hiện trong chuỗi. // Dưới lời giải sẽ là 1 vector.
+
+		Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+#include <string>
+using namespace std;
+const char ch[4] = {'A', 'C', 'G', 'T'};
+string s;
+string ans = "";
+vector <int> position[4];
+int main () { 
+	cin >> s;
+	for (int i = 0; i < (int)s.size(); i++) {
+		if (s[i] == 'A') {
+			s[i] = '0';
+		} else if (s[i] == 'C') {
+			s[i] = '1';
+		} else if (s[i] == 'G') {
+			s[i] = '2';
+		} else if (s[i] == 'T') {
+			s[i] = '3';
+		}
+	}
+	for (int i = 0; i < (int)s.size(); i++) {
+		position[s[i] - '0'].push_back(i);
+	}
+	
+	for (int i = 0; i <= 3; i++) {
+		reverse(position[i].begin(), position[i].end());
+	}
+	int curPos = -1;
+	while (position[0].empty() == false && position[1].empty() == false && position[2].empty() == false && position[3].empty() == false) {
+		bool check = true;
+		for (int c = 0; c <= 3; c++) {
+			while (position[c].empty() == false && position[c].back() <= curPos) {
+				position[c].pop_back();
+			}
+			if (position[c].empty() == true) {
+				check = false;
+				break;
+			}
+		}
+		if (check == false) {
+			break;
+		}
+		char nextChar = 'A';
+		int maxPos = position[0].back();
+		if (position[1].back() > maxPos) {
+			nextChar = 'C';
+			maxPos = position[1].back();
+		}
+		if (position[2].back() > maxPos) {
+			nextChar = 'G';
+			maxPos = position[2].back();
+		}
+		if (position[3].back() > maxPos) {
+			nextChar = 'T';
+			maxPos = position[3].back();
+		}
+		ans += nextChar;
+		curPos = maxPos;
+	}
+	for (int i = 0; i <= 3; i++) {
+		if (position[i].empty() == true) {
+			ans += ch[i];
+			break;
+		}
+	}
+	cout << ans;
+	return 0;
+} 
+
+
+
+	Giải tay:
+
+s = 'ACGTACGT' -----> output(theo source code ở trên): TTA
+
+
+ACGTACGT ==> 01230123
+
+position[0] = {0, 4}
+position[1] = {1, 5}
+position[2] = {2, 6}
+position[3] = {3, 7}
+
+reverse ---> position[0] = {4, 0}
+reverse ---> position[1] = {5, 1}
+reverse ---> position[2] = {6, 2}
+reverse ---> position[3] = {7, 3}
+
+curPos = -1;
+
+while: 
+     check = true
+        nextChar = 'A'
+        maxPos = position[0].back() = 0
+        ---> nextChar = T
+        ---> maxPos = 3
+        ans = 'T'
+        curPos = 3
+           while: 
+                check = true
+                position[0].pop_back() ---> position[0] = {4}
+		position[1].pop_back() ---> position[1] = {5}
+		position[2].pop_back() ---> position[2] = {6}
+		position[3].pop_back() ---> position[3] = {7}
+		nextChar = 'A'
+		maxPos = 4
+		---> nextChar = T
+		---> maxPos = 7
+		ans = "TT"
+		curPos = 7
+		   while: 
+			check = true
+			position[0].pop_back() ---> position[0] = {}
+			position[1].pop_back() ---> position[1] = {}
+			position[2].pop_back() ---> position[2] = {}
+			position[3].pop_back() ---> position[3] = {}
+                        ----> check = false
+position[0].empty() == true
+    ans = "TTA"    // Xuất (TTA)
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+						
+			
+						BUỔI 6
+
+				RECURSION
+
+Đệ quy là một phương pháp giải bằng cách gọi lại chính hàm đang xét 
+
+Một số hình ảnh về đệ quy 
+
+Xét bài toán sau: 
+
+Nhập số tự nhiên N
+Tỉnh tổng các số từ 1 -> N
+
+Cách giải thông thường:
+
+Đặt sum = tổng các số từ 1 -> N'
+
+for i: 1 -> N
+  sum += i;
+
+xuất sum
+
+Gọi một hàm sum(N) với ý nghĩa sum(N) = tổng 1 + 2 + 3..... + N
+
+Nhận xét: 1 + 2 + 3+....+ N = 1 + 2 + 3 + 4.... + (N - 1) + N = sum(N - 1) + N
+
+Giả sử ta đã có kết quả sum(N - 1) ====> sum(N) = sum(N - 1) + N
+
+sum(5) = sum(4) + 5
+sum(4) = sum(3) + 4
+sum(3) = sum(2) + 3
+sum(2) = sum(1) + 2
+sum(1) = sum(0) + 1
+sum(0) = sum(-1) + 0
+sum(-1) = sum(-2) + (-1)
+....
+
+		Phải có điểm dừng, nếu không có điểm dừng thì chạy mãi mãi
+Cụ thể bài tính tổng này, chương trình sẽ trả ra giá trị 0 khi n = 0
+
+
+#include <iostream>
+using namespace std;
+
+int sum(int N) {
+   if (N == 0) {
+   return 0;
+}
+   return sum(N - 1) + N;
+}
+
+int main () {
+   int n;
+   cin >> n;
+   cout << sum(n) << endl;
+   return 0;
+}
+
+
+
+
+Khi thực hiện giải 1 bài toán = đệ quy: 
+
+	1. Cần định nghĩa hàm đệ quy tương ứng là hàm thực hiện công việc nào đó với tham số đầu vào tương ứng. 
+	2. Xác định điểm dừng là điểm mà nếu ta gặp trạng thái này thì hàm đệ quy sẽ không tiếp tục gọi. 
+	3. Ta thực hiện giải bài toán hiện tại như thế nào nếu ta đã giả sử rằng bài toán được gọi đệ quy đã giải 1 cách tối ưu !!!!!!
+	
+
+
+https://www.hackerrank.com/contests/de-quy-1586077377/challenges
+
+
+					-----------------------------------------------------------------------
+
+
+Lũy thừa:https://www.hackerrank.com/contests/de-quy-1586077377/challenges/luy-thua-1 
+
+Nhập số N, xuất ra 2^N
+
+2^N = 2 * 2 * 2.... * 2 = 2^(N - 1) * 2;
+
+			Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+using namespace std;
+
+long long luythua(int n) {
+	if (n == 0) {
+		return 1;
+	}
+	if (n == 1) {
+		return 2;
+	}
+	return luythua(n - 1)* 2;
+}
+
+int main () {
+	int n;
+	cin >> n;
+	cout << luythua(n) << endl;
+	return 0;
+} 
+
+  
+					-----------------------------------------------------------------------
+
+Tìm số lớn nhất: https://www.hackerrank.com/contests/de-quy-1586077377/challenges/tim-so-lon-nhat
+
+
+			Lời giải:
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+using namespace std;
+
+int maxNum(int a[], int n) {
+	if (n == 1) {
+		return a[1];
+	}
+	return max(a[n], maxNum(a, n - 1));	
+}
+
+int main () {
+	int n;
+	cin >> n;
+	int a[104];
+	for (int i = 1; i <= n ; i++) {
+		cin >> a[i];
+	}
+	cout << maxNum(a, n) << endl;
+	return 0;
+} 
+
+  
+					-----------------------------------------------------------------------
+
+Tìm x: https://www.hackerrank.com/contests/de-quy-1586077377/challenges/tim-x
+
+Cho một dãy số nguyên a và 1 số x. Hãy xuất ra tất cả các vị trí của x có trong a. Nếu x không có trong a thì in ra -1
+
+N = 5, x = 2
+
+a = [5, 2, 1, 9, 2]
+
+======> 2 5
+
+isExist(3) = true
+isExist(2) = false
+
+Gọi hàm isExist(N) = true / false là hỏi x có xuất hiện trong n phần tử đầu tiên hay không ???? (a[1], a[2], a[3]...a[N])
+
+Xét điểm dừng: 
+Nếu N == 1, cần kiểm tra a[1] == x hay không ???
+
+Nếu a[1] == x thì return true
+else: return false
+
+isExist(N) = true khi ????????
+
+Nếu a[N] == x || isExist(N - 1) true ========> return true
+else: return false 
+
+
+Nếu isExist(N) == false: =====> return -1;
+else: 
+printPositions(N)
+
+
+
+
+N = 8, x = 2
+
+a = [1, 2, 3, 2, 5, 4, 2, 3]
+
+printPostions(7): 
+   printPostions(6): 2 4 
+   nếu a[7] == x: Xuất ra 7
+
+printPositions(5): xuất ra 2 4
+
+Gọi hàm printPositions(N) là hàm xuất ra các vị trí mà x xuất hiện trong dãy
+
+Điểm dừng: Nếu N == 0 ===> return 
+
+printPostions(N - 1)
+nếu a[N] == x: 
+  xuất ra số N
+
+
+
+bool isExist(int N) {
+     if (N == 1) {
+	if (a[1] == x) return true;
+        else return false;
+   }
+     if (a[N] == x || isExist(N - 1) == true)  {
+         return true;
+   }
+    return false;
+}
+ 
+
+void printPositions (int N) {
+  if (N == 0) return;
+   printPositions(N - 1);
+   if (a[N] == x) { 
+      cout << N << " ";
+}
+}						
+
+main () {
+  if (isExist(N) == false) cout << -1;
+   else printPositions(N);
+   return 0;
+}
+
+
+
+
+			Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+using namespace std;
+
+bool isExist(int a[], int n, int x) {  // Kiem tra xem x co trong a[] hay khong?
+	if (n == 1) {
+		if (a[1] == x) {
+			return true;
+		} else {
+			return false; 
+		}
+	}
+	if (a[n] == x || isExist(a, n - 1, x) == true) {
+		return true;
+	}
+	return false;
+}
+
+void printPos(int a[], int n, int x) {    // in ra vi tri cua phan tu x 
+	if (n == 0) {
+		return;
+	}
+	printPos(a, n - 1, x);
+	if (a[n] == x) {
+		cout << n << " ";
+	}
+}
+
+int main () {
+	int n, x;
+	cin >> n >> x;
+	int a[104];
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+	}
+	if (isExist(a, n, x) == false) {
+		cout << -1 << endl;
+	} else {
+		printPos(a, n, x);
+	}
+	return 0;
+} 
+
+ 
+					-----------------------------------------------------------------------
+
+In sao: https://www.hackerrank.com/contests/de-quy-1586077377/challenges/in-sao
+
+Cho số N, hãy in ra N dòng sao, trong đó dòng thứ i in ra i ngôi sao 
+
+*
+** 
+***
+****
+......
+5
+
+*
+**
+***
+****
+*****
+
+printStars(4)
+*
+**
+***
+****
+
+Gọi hàm printStars(N) là hàm xuất ra N dòng sao theo format đã định
+
+Điểm dừng: Nếu N == 0: return 
+
+Gọi printStars(N - 1)
+for i: 1 -> N  cout << "*";
+cout << endl;
+
+
+printStars(5)
+   printStars(4) 
+    pS(3)
+      pS(2)	
+       pS(1)
+        pS(0)
+        
+
+			Lời giải: 
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+void printStar(int n) {
+	if (n == 0) {
+		return;
+	}
+	printStar(n - 1);
+	for (int i = 1; i <= n; i++) {
+		cout << '*';
+	}
+	cout << endl;
+	
+} 
+
+int main () {
+	int n;
+	cin >> n;
+	printStar(n);
+	return 0;
+}
+
+
+					-----------------------------------------------------------------------
+
+Bội chung nhỏ nhất: https://www.hackerrank.com/contests/de-quy-1586077377/challenges/boi-chung-nho-nhat-3
+
+Cho 2 số nguyên dương a và b, bội chung nhỏ nhất của a và b là số m nhỏ nhất sao cho m chia hết cho a và m cũng chia hết cho b.
+
+a = 4, b = 6 =====> bcnn = 12
+
+gcd(a, b) = 2 =====> bcnn = a*b / gcd(a, b) = 4 * 6 / 2 = 12
+
+a = 12, b = 40 
+
+a = 12, b = 28 // lay b - a
+
+a = 12, b = 16 // lay  b - a
+
+a = 12, b = 4  // lay a - b
+
+a = 8, b = 4 // lay a - b
+
+a = 4, b = 4 // return a =======> ước chung lớn nhất
+
+Gọi hàm gcd(a, b) là hàm xác định ước chung lớn nhất giữa 2 số a và b
+
+Điểm dừng: nếu a == b: return a
+
+nếu a > b : return gcd(a - b, b)
+else : return gcd(a, b - a)
+
+
+
+		Lời giải: 
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+int gcd(int a, int b) {  //uoc chung lon nhat
+	if (a == b) {
+		return a;
+	}
+	if (a > b) {
+		return gcd(a - b, b);
+	} else {
+		return gcd(a, b - a);
+	}
+}
+
+
+
+int main () {
+	int a, b;
+	cin >> a >> b;
+	cout << (a*b) / gcd(a, b) << endl;
+	return 0;
+}
+
+
+
+					-----------------------------------------------------------------------
+Ước chung lớn nhất:
+
+		Lời giải: 
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+int gcd(int a, int b) {  //uoc chung lon nhat
+	if (a == b) {
+		return a;
+	}
+	if (a > b) {
+		return gcd(a - b, b);
+	} else {
+		return gcd(a, b - a);
+	}
+}
+
+
+
+int main () {
+	int a, b;
+	cin >> a >> b;
+	cout << gcd(a, b) << endl;
+	return 0;
+}
+
+
+					-----------------------------------------------------------------------
+
+Số lẻ: https://www.hackerrank.com/contests/de-quy-1586077377/challenges/so-le/problem
+
+		Lời giải: 
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+void soLe(int n) {
+	if (n == 0) {
+		return;
+	}
+	soLe(n - 1);
+	if (n % 2 != 0) {
+		cout << n << " ";
+	}
+	
+}
+int main () {
+	int n;
+	cin >> n;
+	soLe(n);
+	return 0;
+}
+
+
+					-----------------------------------------------------------------------
+
+Xuất: https://www.hackerrank.com/contests/de-quy-1586077377/challenges/xuat/problem
+
+		Lời giải: 
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+void print(int n, int x) {
+	if (n == 0) {
+		return;
+	}
+	print(n - 1, x);
+	cout << n << " " << x - n ;
+	cout << endl;
+}
+
+int main () {
+	int n;
+	cin >> n;
+	int x = n + 1;
+	print(n, x);
+	return 0;
+}
+
+					-----------------------------------------------------------------------
+
+Đảo ngược: https://www.hackerrank.com/contests/de-quy-1586077377/challenges/dao-nguoc/problem
+
+	Lời giải
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+void daoNguoc(int a[], int n, int x) {
+	if (n == 0) {
+		return;
+	}
+	daoNguoc(a, n - 1, x);
+	cout << a[x - n] << " ";
+}
+ 
+
+int main () {
+	int n;
+	cin >> n;
+	int x = n + 1;
+	int a[55];
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+	}
+	daoNguoc(a, n, x);
+	return 0;
+}
+
+
+					-----------------------------------------------------------------------
+
+Dãy đối xứng: https://www.hackerrank.com/contests/de-quy-1586077377/challenges/day-doi-xung-1
+
+		Lời giải
+
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <map>
+#include <fstream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+bool doiXung(int a[], int n, int x) {
+	if (n == 0) {
+		return false;
+	}
+	if (a[n] == a[x - n]) {
+		return true;
+	}
+	doiXung(a, n - 1, x);
+	return false;
+}
+ 
+
+int main () {
+	int n;
+	cin >> n;
+	int x = n + 1;
+	int a[105];
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+	}
+	if (doiXung(a, n, x) == true) {
+		cout << "YES" << endl;
+	} else {
+		cout << "NO" << endl;
+	}
+	return 0;
+	
+}
+
+				
+-------------------------------------------------------------------------------------------------------------------------------------------
+		
+
+					BACKTRACKING 
+
+Quay lui: 
+	 Là một kỹ thuật nhằm mục đích sinh toàn bộ tất cả các trường hợp có thể có của bài toán nhằm mục đích chọn ra lời giải tối ưu
+
+=========> điều này dẫn đến việc backtracking có độ phức tạp rất cao ===> thông thường kích thước của những bài toàn có liên quan đến
+backtracking rất nhỏ ======> ví dụ gặp bài toán có giới hạn n to thì ko bao giờ dùng backtracking được ======> có ý tưởng khác tốt hơn.
+
+
+Ý tưởng của BackTracking:
+
+Nếu ta xây dựng 1 bài toán theo từng bước (từ bước i -> bước i + 1), với mỗi bước, ta tiến hành thử điền đáp án, sau khi điền toàn bộ bài 
+toán, ta xuất kết quả ra và tiến hành thử điền lại những vị trí trước bằng những bài toán khác. 
+
+Cho số N, hãy xuất ra toàn bội các dãy gồm K số được tạo thành từ những số tự nhiên từ 1 -> N
+
+N = 2, K = 3
+
+1 1 1
+1 1 2
+1 2 1
+1 2 2 
+2 1 1
+2 1 2
+2 2 1 
+2 2 2 
+
+Giới hạn: 1 <= N <= 5, 1 <= K <= 10
+
+backTrack(pos) 
+  for các lựa chọn có thể điền
+    Điền các lựa chọn vào vị trí pos 
+    Nếu có thể tiếp tục điền vào vị trí tiếp theo vì gọi backTrack(pos + 1)
+    else: 
+    Xuất dãy thỏa mãn 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+using namespace std;
+int d[13];
+int n, k;
+
+void backTrack(int pos) {
+	for (int i = 1; i <= n; i++) {
+		d[pos] = i;
+		if (pos < k) {
+			backTrack(pos + 1); 
+		} else {
+			for (int j = 1; j <= k; j++) {
+				cout << d[j] << " ";
+			}
+			cout << endl;
+		}
+	}
+}
+
+int main () {
+	cin >> n >> k;
+	backTrack(1);	 
+	return 0;
+} 
+
+
+
+Giải thích: 
+
+d = [?, ?, ?]
+N = 2, K = 3
+
+										2 3
+										1 1 1 
+bT(1):										1 1 2
+ d[1] = 1									1 2 1 
+      bT(2):									1 2 2		
+        d[2] = 1								2 1 1
+	   bT(3): 								2 1 2
+	     d[3] = 1								2 2 1
+		Xuất kết quả([1, 1, 1])						2 2 2
+	     d[3] = 2
+   	        Xuất kết quả([1, 1, 2])						--------------------------------
+        d[2] = 2								Process exited after 3.569 seconds with return value 0
+	   bT(3):								Press any key to continue . . .
+ 	     d[3] = 1
+	        Xuất kết quả([1, 2, 1])
+    	     d[3] = 2
+		Xuất kết quả([1, 2, 2])
+  d[1] = 2
+      bT(2):
+ 	d[2] = 1
+	   bT(3): 
+	     d[3] = 1
+ 		Xuất kết quả([2, 1, 1])
+	     d[3] = 2
+		Xuất kết quả([2, 1, 2])
+	d[2] = 2
+	   bT(3): 
+	     d[3] = 1
+		Xuất kết quả([2, 2, 1])
+	     d[3] = 2
+		Xuất kết quả([2, 2, 2])
+
+... Dừng chương trình														
+
+
+					-----------------------------------------------------------------------
+
+Creating Strings: https://cses.fi/problemset/task/1622
+
+Cho một chuỗi s, hãy xuất ra tất cả những chuỗi s' sao cho chuỗi s' được tạo bởi những ký tự trong chuỗi s
+
+s = "aabc"
+
+aabc
+abac
+abca
+acab
+acba
+baac
+baca
+.....
+
+
+Gọi mảng count[c] là số lượng chữ cái c có trong chuỗi s ban đầu 
+
+Khi ta có hàm backTrack(pos), giả sử ta muốn điền ký tự c vào vị trí pos: 
+
+Chữ c sẽ điền được nếu count[c] > 0
+
+Khi điền xong, ta phải giảm count[c] xuống 1 đơn vị 
+
+backTrack(pos + 1)
+
+count[c]++
+
+	ví dụ: 
+
+s = "aabc"
+
+count['a'] = 0, count['b'] = 0, count['c'] = 0
+
+[a, a, b, c] =========> aabc
+
+void backTrack(int pos) {
+    for (c: 'a' -> 'z') {
+  	if (count[c] > 0) {
+	   d[pos] = c;
+	   count[c]--;
+	
+	if (pos < n) backTrack(pos + 1);
+	else : xuất kết quả
+	count[c]++;
+}
+}	
+}
+
+
+
+	Lời giải : 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+using namespace std;
+string s;
+vector <string> ans;
+int countChar[26];
+string d;
+int length;
+
+void backTrack(int pos) {
+	for (int c = 0; c < 26; c++) {
+		if (countChar[c] > 0) {
+			d[pos] = char(c + 'a');
+			countChar[c]--;
+			if (pos < length - 1) {
+				backTrack(pos + 1);
+			} else {
+				ans.push_back(d);
+			}
+			countChar[c]++;
+		}
+	}
+}
+
+int main () { 
+	cin >> s;
+	length = (int)s.size();
+	d.resize(length);
+	memset(countChar, 0, sizeof(countChar));
+	for (int i = 0; i < length; i++) {
+		countChar[s[i] - 'a']++;    // dung de dem 1 chu cai xuat hien bao nhieu lan trong chuoi
+	}	
+	backTrack(0);	
+	cout << (int)ans.size() << endl;
+	for (int i = 0; i < (int)ans.size(); i++) {
+		cout << ans[i] << endl;
+	}	
+	return 0;
+} 
+
+  
+
+
+	Giaỉ thích: 
+
+s = abc
+6
+abc
+acb
+bac
+bca
+cab
+cba
+
+
+bT(0): 
+  d[0] = a
+     countChar[0] = 0; // số lần 'a' xuất hiện trong chuỗi s
+       bT(1):
+ 	 d[1] = b
+  	    countChar[1] = 0; // số lần 'b' xuất hiện trong chuỗi s
+              bT(2): 
+	        d[2] = c
+		   countChar[2] = 0; // số lần 'c' xuất hiện trong chuỗi s
+ 		       ans = [abc]  // Xuất ([abc])
+			 countChar[2] = 1; // số lần 'c' được tăng lại
+            countChar[1] = 1;   // số lần 'b' được tăng lại
+     	 d[1] = c
+            countChar[2] = 0; 
+              bT(2): 
+ 		d[2] = b
+  		   countChar[1] = 0;
+                       ans = [acb]  //Xuất ([acb])
+			 countChar[1] = 1;  //số lần 'b' được tăng lại 
+            countChar[2] = 1;  // số lần 'c' được tăng lại
+     countChar[0] = 1;  // số lần 'a' được tăng lại
+  d[0] = b
+     countChar[1] = 0;
+       bT(1): 
+ 	d[1] = a
+	   countChar[0] = 0;
+             bT(2): 
+                d[2] = c
+		   countChar[2] = 0;
+                       ans = [bac]    //Xuất ([bac])
+			   countChar[2] = 1;  // số lần 'c' được tăng lại
+           countChar[0] = 1;  // số lần  'a' được tăng lại  
+	d[1] = c 
+	   countChar[2] = 0;
+             bT(2): 
+ 		d[2] = a
+		   countChar[0] = 0;
+                       ans = [bca]     //Xuất ([bca])
+			   countChar[0] = 1;  // số lần 'a' được tăng lại
+     countChar[1] = 1;   // số lần 'b' được tăng lại
+  d[0] = c
+     countChar[2] = 0;
+       bT(1): 
+         d[1] = a
+            countChar[0] = 0;
+	      bT(2): 
+                d[2] = b
+                   countChar[1] = 0;
+                        ans = [cab]     //Xuất([cab])
+                          countChar[1] = 1;   // số lần 'b' được tăng lại 
+            countChar[0] = 1; // số lần 'a' được tăng lại
+	 d[1] = b
+            countChar[1] = 0;
+              bT(2): 
+                d[2] = a
+                   countChar[0] = 0;
+ 			ans = [cba]      //Xuất ([cba])
+                          countChar[0] = 1;  //số lần 'a' được tăng lại
+            countChar[1] = 1; // số lần 'b' được tăng lại
+     countChar[2] = 1;   // số lần 'c' được tăng lại
+					-----------------------------------------------------------------------
+
+Subsets: https://leetcode.com/problems/subsets/description/
+
+Cho một dãy nums gồm N số nguyên dương khác nhau. Hãy liệt kê tất cả các tập hợp của các phần tử trong dãy a
+
+nums = [2, 1, 5, 4]
+
+[]
+[2]
+[1]
+[5]
+[4]
+[2, 1]
+[2, 5]
+[2, 4]
+[1, 5]
+[1, 4]
+[5, 4]
+[2, 1, 5]
+[2, 1, 4]
+[2, 5, 4]
+[1, 5, 4]
+[2, 1, 5, 4]
+
+
+Ta tạo một vector <int> listNumbers với ý nghĩa listNumbers chứa các số "ĐƯỢC CHỌN"
+
+Ta xét từng vị trí i từ 0 -> n - 1, mỗi vị trí i, ta xét state = 0 hoặc 1 với ý nghĩa state = 0 là số đó không được chọn, state = 1 là được
+
+nếu state = 1, ta đưa nums[i] vào listNumbers, nếu có thể tiếp tục xét đến vị trí i + 1, thì ta tiếp tục gọi bài toán đến vị trí i + 1
+
+Nếu i == n - 1, các số trong listNumbers là các số trong tập hợp được chọn
+
+Nếu số thứ i có state = 1 thì ta xóa số cuối cùng ra khỏi listNumbers.
+
+listNumbers = []
+
+backTrack(pos):
+  for state: 0 -> 1
+    nếu state == 1:
+      listNumbers.push_back(nums[pos])
+    nếu pos < n - 1:
+      backTrack(pos + 1)
+    else: 
+      đưa listNumbers vào ans
+    nếu state == 1: 
+      listNumbers.pop_back()
+
+
+
+	Lời giải:
+
+class Solution {
+public:
+    void backTracking(int pos, vector <int> &listNumbers, vector <vector<int>> &ans, const vector <int> &nums) {
+        for (int state = 0; state <= 1; state ++) {
+           if (state == 1) {
+               listNumbers.push_back(nums[pos]);
+           } 
+           if (pos < nums.size() - 1) {
+               backTracking(pos + 1, listNumbers, ans, nums);
+           } else {
+               ans.push_back(listNumbers);
+           }
+           if (state == 1) {
+               listNumbers.pop_back();
+           }
+        }
+    }
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector <vector<int> >ans;
+        vector <int> listNumbers;
+        backTracking(0, listNumbers, ans, nums);
+        return ans;
+    }
+};
+
+
+
+	Giải thích:
+Input: nums = [1, 2, 3]
+
+Output: [[],[3],[2],[2,3],[1],[1,3],[1,2],[1,2,3]]
+
+
+backTracking(0):
+  state = 0
+     backTracking(1):
+       state = 0
+	  backTracking(2):
+    	    state = 0
+  	       listNumbers = []
+	       ans.push_back(listNumbers)  // ans = [[]]
+	    state = 1
+               listNumbers = [3]
+	       ans.push_back(listNumbers) // ans = [[], [3]]
+	       listNumbers.pop_back()
+       state = 1
+          listNumbers = [2]
+	  backTracking(2): 
+	    state = 0
+	       listNumbers = [2]
+	       ans.push_back(listNumbers)  // ans = [[], [3], [2]]
+	    state = 1
+	       listNumbers = [2, 3]
+	       ans.push_back(listNumbers) // ans = [[], [3], [2], [2, 3]]
+	       listNumbers.pop_back()
+       listNumbers.pop_back()
+  state = 1
+     listNumbers = [1]
+     backTracking(1):
+       state = 0
+          backTracking(2):
+            state = 0
+               listNumbers = [1]
+	       ans.push_back(listNumbers) // ans = [[], [3], [2], [2, 3], [1]]
+	    state = 1
+               listNumbers = [1, 3]
+	       ans.push_back(listNumbers) // ans = [[], [3], [2], [2, 3], [1], [1, 3]]
+	       listNumbers.pop_back()
+       state = 1
+	  listNumbers = [1, 2]
+          backTracking(2):
+ 	    state = 0
+               listNumbers = [1, 2]
+ 	       ans.push_back(listNunmbers)  // ans = [[], [3], [2], [2, 3], [1], [1, 3], [1, 2]]
+	    state = 1
+	       listNumbers = [1, 2, 3]
+               ans.push_back(listNumbers) // ans = [[], [3], [2], [2, 3], [1], [1, 3], [1, 2], [1, 2, 3]]  
+               listNumbers.pop_back()
+	  listNumbers.pop_back()
+     listNumbers.pop_back()
+
+
+					-----------------------------------------------------------------------
+
+
+Divisible Numbers(hard version): https://codeforces.com/contest/1744/problem/E2
+
+Tìm 2 số x, y sao cho x * y chia hết cho a * b
+
+a < x <= c, b < y <= d
+
+Nhận xét: 
+
+1 số nguyên dương có giá trị không quá 1 tỷ thì sẽ có ~ 10 ước số nguyên tố 
+
+468 = 2^2 * 3^2 * 13 {2, 3, 13}
+
+Nếu phân tích a thành tích các thừa số nguyên tố, phân tích b thành tích các thừa số nguyên tố
+
+a = 2^a2 * 3^a3 * 5*a5 *....
+b = 2^b2 * 3^b3 * 5*b5*....
+
+a * b = 2^(a2 + b2) * 3^(a3 + b3) * 5^(a5 + b5) *......
+
+a = 54 =  2^1 * 3^3
+b = 90 = 2^1 * 3^2 * 5^1
+
+c = 100
+d = 120
+
+a * b = 2^2 * 3^5 * 5^1
+
+x = 2^1 * 3^2 = 18 ---> 90
+y = 2^1 * 3^3 * 5^1 = 170 
+
+
+Để x * y chia hết cho a * b thì trong cách biểu diễn tích các thừa số nguyên tố của x * y, BUỘC phải có sự xuất hiện của 2^2 * 3^5 * 5^1 
+
+Nếu ta tạo số x mà trong cách phân tích thừa số nguyên tố của x có 3^2 * 5^1 =====> trong cách phân tích thừa số nguyên tố của y, BUỘC phải 
+có 2^2 * 3^3
+
+Ta tiến hành tạo số x
+
+Giả sử tập các ước số nguyên tố sau khi a * b là [p1, p2, p3, ...pk] và với các số lũy thừa tương ứng là [q1, q2, ...qk]
+
+a * b = p1^q1 * p2^q2 * p3^q3 * ....pk^qk
+
+a * b = 2^2 * 3^5 * 5^1
+
+count[2] = 0, count[3] = 2, count[5] = 1 (x = 2^0 * 3^2 * 5^1)
+
+Gọi một mảng count[p] với ý nghĩa count[p] là số lượng số mũ mà x chọn
+
+Gọi backTrack(pos): xét đến lựa chọn thứ pos trong tập các thừa số nguyên tố của a * b
+Khi đang đứng tại p[pos], ta có 2 lựa chọn 
+  1. Nhảy sang số nguyên tố thứ pos + 1 (pos + 1 <= k): backTrack(pos + 1)
+  2. Ta nhân p[pos] vào số x (count[p[pos]] < q[pos]): 
+       x *= p[pos]
+       count[p[pos]]++
+       backTrack(pos)
+       x /= p[pos]
+       count[p[pos]]--
+
+
+a * b = 2^2 * 3^5 * 5^1
+x = 2^1 * 3^3
+
+y = a * b / x
+
+Ta gọi hàm modify(x, limit): Đẩy x lên giá trị cực đại nhưng x không vượt quá limit
+
+Sau khi gọi modify(x, c) và modify(y, d), nếu x > a và y > b ========> Xuất ra ngay kết quả là x và y và DỪNG THUẬT TOÁN
+
+x = 1, p = [2, 3, 5], q = [2, 5, 1]
+
+x = 2^1, count[2] = 1
+
+x = 2^1 * 3^1, count[2] = 1, count[3] = 1
+x = 2^1 * 3^2, count[2] = 1, count[3] = 2
+x = 2^1 * 3^3, count[2] = 1, count[3] = 3 
+
+	Lời giải:
+
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+#include <string>
+using namespace std;
+int numTest;
+int a, b, c, d;
+int x = -1, y = -1;
+map <int, int> cnt;
+vector < pair <int, int> > save;
+
+void process(int x) {      // dùng để phân tích a, b thành tích các thừa số nguyên tố
+	for (int i = 2; i <= (int)sqrt(x); i++) {
+		while (x % i == 0) {
+			cnt[i]++;
+			x /= i;
+		}
+	}
+	if (x > 1) {
+		cnt[x]++;
+	}
+}
+
+long long modify(long long x, long long limit) {   // dùng để đẩy x, y lên cực đại nhưng x, y không vượt quá lần lượt c, d (x <= c, y <= d)
+	if (x > limit) {
+		return -1;
+	}
+	long long mul = limit / x;
+	return x * mul;
+}
+
+void backTrack(int pos, long long mul) {
+	if (x != -1 && y != -1) {
+		return;
+	}
+	long long tmpx = modify(mul, c);
+	long long rest = 1LL * a * b / mul;
+	long long tmpy = modify(rest, d);
+	if (tmpx != -1 && tmpy != -1 && tmpx > a && tmpy > b) {
+		x = tmpx;
+		y = tmpy;
+		return;
+	}
+	if (pos == (int)save.size()) {
+		return;
+	}
+	backTrack(pos + 1, mul);
+	if (save[pos].second > 0 && mul * save[pos].first <= c) {
+		save[pos].second--;
+		backTrack(pos, mul * save[pos].first);
+		save[pos].second++;
+	}
+}
+
+int main () { 
+	cin >> numTest;
+	for (int testCase = 1; testCase <= numTest; testCase++) {
+		cnt.clear();
+		save.clear();
+		x = -1;
+		y = -1;
+		cin >> a >> b >> c >> d;
+		process(a);
+		process(b);
+		for (map <int, int>:: iterator it = cnt.begin(); it != cnt.end(); it++) {
+			save.push_back(make_pair(it->first, it->second));
+		}
+		backTrack(0, 1);
+		cout << x << ' ' << y << endl;
+	}	
+	return 0;
+} 
+
+  
+
+	Giải thích:   
+
+Input: 1
+       5040 40320 40319 1000000000
+
+Output: 40319 812851200
+
+
+
+cin >> numTest;  // nhập 1
+cin >> a >> b >> c >> d;  // nhập a = 5040, b = 40320, c = 40319, d = 1000000000
+
+process(a);  // phân tích a thành tích các thừa số nguyên tố
+   a = 5040;
+for i: 2 -> sqrt(a) == 70
+   5040 % 2 == 0
+      cnt[2] = 1;
+      a = 2520
+   2520 % 2 == 0
+      cnt[2] = 2;
+      a = 1260
+   1260 % 2 == 0
+      cnt[2] = 3;
+      a = 630
+  630 % 2 == 0
+      cnt[2] = 4;
+      a = 315
+  315 % 2 != 0 ----> i = 3
+  315 % 3 == 0
+      cnt[3] = 1;
+      a = 105
+  105 % 3 == 0
+      cnt[3] = 2;
+      a = 35
+  35 % 3 != 0 ---> i = 4
+  35 % 4 != 0 ---> i = 5
+  35 % 5 == 0
+      cnt[5] = 1;
+      a = 7
+  7 % 5 != 0  ---> i = 6
+  7 % 6 != 0 ---> i = 7
+  7 % 7 == 0
+      cnt[7] = 1;
+      a = 1;
+
+==========> 5040 = 2^4 * 3^2 * 5^1 * 7^1
+ 
+process(b);  // phân tích b thành tích các thừa số nguyên tố
+  b = 40320;
+for i: 2 -> sqrt(b) == 200
+   40320 % 2 == 0
+      cnt[2] = 1;
+      b = 20160
+   20160 % 2 == 0
+      cnt[2] = 2;
+      b = 10080
+   10080 % 2 == 0
+      cnt[2] = 3;
+      b = 5040
+   5040 % 2 == 0 
+      cnt[2] = 4;
+      b = 2520
+   2520 % 2 == 0
+      cnt[2] = 5
+      b = 1260
+   1260 % 2 == 0
+      cnt[2] = 6
+      b = 1260
+   630 % 2 == 0
+      cnt[2] = 7
+      b = 315
+   315 % 2 != 0  --> i = 3
+   315 % 3 == 0
+      cnt[3] = 1;
+      b = 105
+   105 % 3 == 0
+      cnt[3] = 2;
+      b = 35
+   35 % 3 != 0  --> i = 4
+   35 % 4 != 0  --> i = 5
+   35 % 5 == 0
+      cnt[5] = 1;
+      b = 7
+   7 % 5 != 0  --> i = 6
+   7 % 6 != 0  --> i = 7
+   7 % 7 == 0
+      cnt[7] = 1;
+      b = 1;
+
+============> 40320 = 2^7 * 3^2 * 5^1 * 7^1
+  
+============> a * b = 2^11 * 3^4 * 5^2 * 7^2 = 203212800
+
+for (map <int, int>:: iterator it = cnt.begin(); it != cnt.end(); it++) {
+    save.push_back(make_pair(it->first, it->second));   // save = [ [2 11], [3 4], [5 2], [7 2] ]
+}
+  
+
+backTrack(0, 1): 
+  x = -1;
+  y = -1;
+  tmpx = modify(mul, c);
+  //long long modify(mul, c): 
+       if (mul > c) //  (1 > 40319)--> false
+       long long z = c / mul == 40319 / 1 = 40319
+       return mul * z;  // 1 * 40319   
+  ====> tmpx = 40319;
+  
+  rest = 1LL * a * b / mul;  // rest = 203212800 / 1 = 203212800;
+  tmpy = modify(rest, d);
+  // long long modify(rest, d):
+       if (rest > d) // (203212800 > 1000000000)--> false
+       long long t = d / rest == 4;
+       return rest * t == 203212800 * 4 == 812851200;
+  ====> tmpy = 812851200;
+  
+  tmpx > a (40319 > 5040)  && tmpy > b (812851200 > 40320)
+     --->  x = tmpx   // x = 40319;
+     --->  y = tmpy   // y = 812851200;
+           return;
+              backTrack(0, 1): 
+                 x = 40319; y = 812851200;         					// Xuất 40319  812851200. 
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+ 					
+					BUỔI 7
+
+                     DIVIDE AND CONQUER (Chia để trị)
+
+
+Chia để trị là phương pháp giải 1 bài toán bằng cách giải 1 bài toán nhỏ hơn có cùng tính chất với bài toán hiện tại
+
+Ví dụ: tính tổng từ 1 -> n
+
+sum(n) = sum(n - 1) + n
+
+Các bước giải 1 bài toán bằng chia để trị: 
+
+  1. Định nghĩa bài toán với tham số đầu vào là gì, và ý nghĩa bài toán là gì ? 
+  2. Giải quyết bài toán khi xét trường hợp nhỏ nhất
+  3. Đưa ra kết quả bài toán
+  4. Giả sử bài toán con đã được giải một cách tối ưu, hãy giải quyết bài toán hiện tại dựa trên lời giải của bài toán con như thế nào ???
+
+Merge sort(hàm sort trong thư viện STL được sử dụng dựa trên merge sort)
+
+Dãy a = [5, 2, 9, 1, 4, 3]
+
+Ý tưởng merge sort: 
+
+   Ta chia 1 nửa dãy a thành 2 phần có số lượng phần tử như nhau hoặc hơn nhau 1 phần tử, gọi là a1 và a2
+
+Giả sử a1 đã tăng dần, a2 cũng đã tăng dần
+
+===> Ta tiến hành trộn 2 dãy đã tăng dần lại thành dãy tăng dần cuối cùng!!!!
+
+Thao tác trộn: 
+
+Khi ta có 2 dãy đã được sắp xếp, ta trộn 2 dãy này lại để được dãy sắp xếp tăng dần cuối cùng
+
+a1 = [2, 5, 8]
+a2 = [1, 4, 13]
+          // dùng two pointers, p1 chỉ phần tử bé nhất của a1, p2 chỉ phần tử bé nhất của a2 rồi so sánh p1, p2
+          // nếu p1 > p2 thì lấy p2 và pop_back(p2) ra khỏi a2 và gán p2 = phần tử bé nhất hiện tại rồi so sánh với p1
+a = [1, 2, 4, 5, 8, 13]
+
+
+ví dụ: a = [5, 2, 9, 1, 4, 3]
+a1 = [5, 2, 9]
+ ---> [5, 2]
+       [5]
+       [2]
+      ----> [2, 5]
+     [9]
+------------> [2, 5, 9]
+
+a2 = [1, 4, 3]
+ ---->    [1, 4]
+     [1]
+     [4]
+           ----> [1, 4]
+   [3]
+ ------> [1, 3, 4]
+
+-----------------------> [1, 2, 3, 4, 5, 9]
+
+mergeSort(l, r): trộn các phần tử từ vị trí l -> vị trí r tăng dần
+   if (l == r): return;
+   đặt mid = (l + r) / 2
+   mergeSort(l, mid)
+   mergeSort(mid + 1, r)
+   a = merge(l, mid, mid + 1, r)
+
+Sau ~log(N) bước, l và r sẽ bằng nhau !!!!!!, hàm merge có độ phức tạp O(N)
+
+=======> độ phức tạp của merge sort: O(NlogN)
+
+
+				-----------------------------------------------------------------------
+
+WC1 (Winter Contest 2019): https://drive.google.com/drive/folders/1YnNt0uh36Ky1GfiMRFTz4yqIqdxSfI71
+
+Với mỗi số a[i], hãy tính giá trị a[1] * a[2] * a[3] * ... a[n]  /  a[i]
+
+1 <= a[i] <= 1000
+1 <= n <= 100000
+
+Thông thường trong tin học, kết quả bài toán có thể sẽ rất lớn, kiểu dữ liệu số nguyên trong ngôn ngữ lập trình không thể chứa
+
+Ta sẽ đưa ra kết quả sau khi mod cho 1 con số M nào đó
+
+Một số phép toán trong phép mod
+
+(a + b) % M = (a % M + b % M) % M
+(a - b) % M = (a % M - b % M + M) % M
+(a * b) % M = (a % M * b % M) % M
+
+Nhận xét: 
+
+a[1] * a[2] * ... * a[i] * a[i + 1] * .... * a[n] / a[i] = a[1] * a[2] * ... * a[i - 1] * a[i + 1] * a[i + 2] * ... * a[n]
+
+Ta đặt prefix[i] = (a[1] * a[2] * a[3] * ... * a[i]) % M, suffix[i] = (a[i] * a[i + 1] * .....* a[n]) % M
+
+prefix[i] = (prefix[i - 1] * a[i]) % M
+suffix[i] = (suffix[i - 1] * a[i]) % M
+a[1] * a[2] * ... * a[i] * a[i + 1] * .... * a[n] / a[i] = a[1] * a[2] * ... * a[i - 1] * a[i + 1] * a[i + 2] * ... * a[n]
+
+= (prefix[i - 1] * suffix[i + 1]) % M 
+
+Ta cần tính a * b % M
+
+a tối đa 68 tỷ, b tối đa 68 tỷ
+
+68 tỷ * 1 triệu, long long vẫn chứa đựng được
+
+Ta tách số b thành b = 1000000 * d + r 
+
+a * b = a * (1000000 * d + r) = (a * d) * 1000000 + a * r
+
+Ta gọi hàm mul(a, b) là hàm tính tích a * b % M không bị tràn số 
+
+mul(a, b): 
+  nếu b <= 1000000: return (a * b) % M
+  đặt d = b / 1000000, đặt r = b % 1000000
+  đặt ret = mul(a, d)
+  ret = (ret * 1000000) % M
+  ret = (ret + (a * r) % M) % M
+  return ret  
+
+	Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+#include <string>
+using namespace std;
+int T;
+int n;
+int a[100005];
+long long prefix[100005], suffix[100005];
+const long long mod = 68718952446;
+
+long long mul(long long a, long long b) {
+	if (b <= 1000000) {
+		return (a * b) % mod;
+	}
+	long long d = b / 1000000;
+	long long ret = mul(a, d);
+	ret = (ret * 1000000) % mod;
+	long long r = b % 1000000;
+	if (b % 1000000) {
+		ret = (ret + (a * r) % mod) % mod;
+	}
+	return ret;
+}
+
+int main () { 
+	cin >> T;
+	while (T--) {
+		cin >> n;
+		for (int i = 1; i <= n; i++) {
+			cin >> a[i];
+		}
+		prefix[0] = 1LL;
+		suffix[n + 1] = 1LL;
+		for (int i = 1; i <= n; i++) {
+			prefix[i] = (prefix[i - 1] * a[i]) % mod;
+		}
+		for (int i = n; i >= 1; i--) {
+			suffix[i] = (suffix[i + 1] * a[i]) % mod;
+		}
+		for (int i = 1; i <= n; i++) {
+			long long ans = prefix[i - 1];
+			ans = mul(ans, suffix[i + 1]);
+			cout << ans << ' ';
+		}
+		cout << endl;
+	}	
+	return 0;
+} 
+
+
+
+	Giải thích:
+Input: 1
+       5
+       1000 1000 1000 1000 1000
+
+Output: 37934665756 37934665756 37934665756 37934665756 37934665756
+  
+
+cin >> T;      // Nhập số lượng input, T = 1
+cin >> n;      // Nhập số nguyên dương n, là số lượng phần tử trong dãy a, n = 5
+cin >> a[i];   // nhập dãy a = [1000, 1000, 1000, 1000, 1000]
+
+prefix[0] = 1LL;      // Gán giá trị '1' cho phần tử đầu tiên của mảng prefix
+suffix[n + 1] = 1LL;  // Phần tử n + 1 của mảng suffix được gán bằng '1'
+
+prefix[i] = (prefix[i - 1] * a[i]) % mod;   
+   /* prefix[1] = (prefix[0] * a[1]) % mod; ---> prefix[1] = (1 * 1000) % 68718952446 = 1000;
+      prefix[2] = (prefix[1] * a[2]) % mod; ---> prefix[2] = (1000 * 1000) % 68718952446 = 1000000;
+      prefix[3] = (prefix[2] * a[3]) % mod; ---> prefix[3] = (1000000 * 1000) % 68718952446 = 1000000000;
+      prefix[4] = (prefix[3] * a[4]) % mod; ---> prefix[4] = (1000000000 * 1000) % 68718952446 = 37934665756;
+      prefix[5] = (prefix[4] * a[5]) % mod; ---> prefix[5] = (37934665756 * 1000) % 68718952446 = 1804005808;
+   */
+
+suffix[i] = (suffix[i + 1] * a[i]) % mod;
+   /* suffix[5] = (suffix[6] * a[5]) % mod; ---> suffix[5] = (1 * 1000) % 68718952446 = 1000;
+      suffix[4] = (suffix[5] * a[4]) % mod; ---> suffix[4] = (1000 * 1000) % 68718952446 = 1000000;
+      suffix[3] = (suffix[4] * a[3]) % mod; ---> suffix[3] = (1000000 * 1000) % 68718952446 = 1000000000;
+      suffix[2] = (suffix[3] * a[2]) % mod; ---> suffix[2] = (1000000000 * 1000) % 68718952446 = 37934665756;
+      suffix[1] = (suffix[2] * a[1]) % mod; ---> suffix[1] = (37934665756 * 1000) % 68718952446 = 1804005808;
+   */
+    
+for (int i = 1; i <= n; i++) {
+    long long ans = prefix[i - 1];
+          /* ans = prefix[0] --> ans = 1;
+             ans = prefix[1] --> ans = 1000;
+             ans = prefix[2] --> ans = 1000000;
+             ans = prefix[3] --> ans = 1000000000;
+	     ans = prefix[4] --> ans = 37934665756;
+          */
+
+    ans = mul(ans, suffix[i + 1]);
+	  /* ans = prefix[0]; ---> ans = mul(1, suffix[2]);
+                                     suffix[2] = 37934665756;
+ 				     ---> d = suffix[2] / 1000000;  d = 37934; 
+				     ---> ret = mul(1, d); ret = mul(1, 37934);
+							      d = 37934 < 1000000
+								 ---> return (1 * d) % mod = (1 * 37934) % 68718952446 = 37934;
+                                     ---> ret = (ret * 1000000) % mod;  ret = (37934 * 1000000) % 68718952446 = 37934000000;
+				     long long r = suffix[2] % 1000000; r = 37934665756 % 1000000 = 665756;
+				     if (suffix[2] % 1000000) {
+ 				       ret = (ret + (1 * r) % mod) % mod = 37934665756;
+				     } 
+			                return ret;
+                 =======> ans = 37934665756;            		// Xuất 37934665756
+             ans = prefix[1]; ---> ans = mul(prefix[1], suffix[3]);
+                                   tính tương tự như khi ans = prefix[0]
+                 =======> ans = 37934665756;            		// Xuất 37934665756
+             ans = prefix[2]; ---> ans = mul(prefix[2], suffix[4]);
+                                   tính tương tự như khi ans = prefix[0]
+                 =======> ans = 37934665756;            		// Xuất 37934665756
+             ans = prefix[3]; ---> ans = mul(prefix[3], suffix[5]);
+                 =======> ans = 37934665756;            		// Xuất 37934665756
+             ans = prefix[4]; ---> ans = mul(prefix[4], suffix[6]);
+                 =======> ans = 37934665756;            		// Xuất 37934665756
+    cout << ans << ' ';  
+} 
+  
+
+				-----------------------------------------------------------------------
+
+
+SC4 (Summer Contest 2020): https://drive.google.com/drive/folders/13bT5jMIQUxHAhuJpGZnbNl4EZFn_8E0a
+
+Tính tổng S = (1 + x + x^2 + x^3 + ... + x^N) % M (1 <= x, N, M <= 1 tỷ)
+
+S = 1 + x + x^2 + x^3 + ....+ x^N  	     (1)
+x.S = x + x^2 + x^3 + x^4 +....+ x^(N + 1)   (2)
+
+(2) - (1): S(x - 1) = x^(N + 1) - 1 
+
+Xét riêng trường hợp x = 1 =====> S = (N + 1), kết quả là S % M
+
+Khi x khác 1: S = [x^(N + 1) - 1] / (x - 1)
+
+Ta tính S % M
+
+N = 10
+
+S(10) = 1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10
+S(10) = S(9) + x^10
+
+S(9) = (1 + x + x^2 + x^3 + x^4) + (x^5 + x^6 + x^7 + x^8 + x^9)    
+     = (1 + x + x^2 + x^3 + x^4) + x^5 * (1 + x + x^2 + x^3 + x^4)
+     = (1 + x + x^2 + x^3 + x^4) * (1 + x^5)
+
+S(4) = S(3) + x^4
+
+S(3) = 1 + x + x^2 + x^3
+     = (1 + x) * (1 + x^2)
+
+S(1) = 1 + x
+
+
+Tính x^N % M
+
+x^10 = (x^5)^2
+
+x^5 = (x^4)*x
+x^4 = (x^2)^2
+
+long long fastpow (long long N) { 		    // tính x^N % M
+   if(N == 0): return 1
+   if N % 2 == 1: return (fastpow(N - 1) * x) % M
+   if N % 2 == 0: 
+        đặt ret = fastpow(N / 2)
+	return (ret * ret) % M;
+}
+
+
+Gọi hàm calc(N): tính tổng 1 + x +.... + x^N
+
+nếu N == 0: return 1
+if N % 2 == 0: return calc(N - 1) + fastpow(N)
+if N % 2 == 1: 
+   đặt ret = calc(N / 2)
+   ret = (ret * (1 + fastpow(N / 2 + 1)))
+   return ret; 
+  
+  
+	Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+#include <string>
+using namespace std;
+int T;
+
+long long fastPow(long long x, long long n, long long m) {   //tinh x^N % M
+	if (n == 0) {
+		return 1LL;
+	}
+	if (n % 2 == 0) {
+		long long ret = fastPow(x, n / 2, m);
+		return (ret * ret) % m;
+	}
+	return (fastPow(x, (n - 1), m) * x) % m;
+}
+
+long long calc(long long x, long long n, long long m) {   // (tinh 1 + x^1 + x^2 + ...+ x^N) % m
+	if (n == 0) {
+		return 1LL;
+	}
+	if (n % 2 == 0)  {
+		return (calc(x, n - 1, m) + fastPow(x, n, m)) % m;
+	}
+	long long ret = calc(x, n / 2, m);
+	ret = (ret * (1 + fastPow(x, n / 2 + 1, m))) % m;
+	return ret;
+}
+
+int main () { 
+	cin >> T;
+	while (T--) {
+		long long x, N, M;
+		cin >> x >> N >> M;
+		cout << calc(x, N, M) << endl;
+	}
+	return 0;
+} 
+
+  
+      Giải thích: 
+
+Input: 1
+       2 5 50
+Output: 13
+
+
+cin >> T;               //Nhập T = 1
+cin >> x >> N >> M;     //Nhập x = 2, N = 5, M = 50
+
+tính hàm calc: 
+
+calc(2, 5, 50):
+ n = 5;  // n % 5 != 0
+  --> ret = calc(2, 2, 50);
+            /*tính 
+                 calc(2, 2, 50):
+                   n = 2;  // n % 2 == 0                  
+                   --> return (calc(2, 1, 50) + fastPow(2, 2, 50)) % 50;
+          từ (a) và (b) ===> return (3 + 4) % 50 = 7
+                        ===> calc(2, 2, 50) = 7
+  ---> ret = 7
+  ===> ret = (ret * (1 + fastPow(2, 3, 50))) % 50;
+   từ (c) ta có: fastPow(2, 3, 50) = 8
+ ====> ret = (7 * (1 + 8)) % 50 = 63 % 50 = 13;
+
+====> calc(2, 5, 50) = 13                          // Xuất 13
+
+                         /* bước 1: tính 
+  				      calc(2, 1, 50)
+                                         n = 1; // n % 2 != 0
+                                         --> return ret = calc(2, 0, 50);
+                                                             n = 0; --> return 1;
+ 				===> ret = 1
+                                       --> return ret = (ret * (1 + fastPow(2, 1, 50))) % 50;
+                                                      = (1 * (1 + fastPow(2, 1, 50))) % 50;
+                                                      = (1 + fastPow(2, 1, 50)) % 50;                (1)
+                                         từ (2)==>ret = (1 + 2) % 50 = 3
+                                     ===> calc(2, 1, 50) = 3              (a)
+				
+                         /* bước 2: tính
+                                      fastPow(2, 2, 50)
+                                         n = 2; // n % 2 == 0
+                                         ret = fastPow(2, 1, 50);
+                                                  n = 1; // n % 2 != 0
+ 						  return (fastPow(2, 0, 50) * 2) % 50;
+                                                             n = 0; --> return 1;
+                                                  ==> return 2 % 50 = 2; -----> fastPow(2, 1, 50) = 2;   (2)
+				    ---> ret = 2;
+                                         return (ret * ret) % m; ---> (2 * 2) % 50 = 4;
+                                      ===> fastPow(2, 2, 50) = 4          (b)
+
+                         /* bước 3: tính
+				      fastPow(2, 3, 50)
+                                        n = 3; // n % 2 != 0
+                                        return (fastPow(2, 2, 50) * 2) % 50;
+                                        từ (b) ta có: fastPow(2, 2, 50) = 4
+                                       ===> return (4 * 2) % 50;
+                                       ===> fastPow(2, 3, 50) = 8         (c)
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+				CONTEST THÁNG 2
+
+C. Fibonacci: https://www.hackerrank.com/challenges/ctci-fibonacci-numbers/problem
+              https://vjudge.net/contest/555903#problem/C
+
+Cho 1 số N. hãy tính fibonacci(N)
+
+ví dụ: 
+  fibonacci(0) = 0
+  fibonacci(1) = 1
+  fibonacci(2) = fibonacci(1) + fibonacci(0) = 1
+  fibonacci(3) = fibonacci(2) + fibonacci(1) = 2
+  fibonacci(4) = fibonacci(3) + fibonacci(2) = 3
+  fibonacci(5) = fibonacci(4) + fibonacci(3) = 5
+  fibonacci(6) = fibonacci(5) + fibonacci(4) = 8
+  fibonacci(7) = fibonacci(6) + fibonacci(5) = 13
+  fibonacci(8) = fibonacci(7) + fibonacci(6) = 21
+  fibonacci(9) = fibonacci(8) + fibonacci(7) = 34
+
+     Lời giải: 
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+#include <string>
+using namespace std;
+
+int fibonacci(int n) {
+	if (n == 0) {
+		return 0;
+	}
+	if (n == 1) {
+		return 1;
+	}
+	return fibonacci(n - 1) + fibonacci(n - 2);
+}
+ 
+int main () { 
+	int n;
+	cin >> n;
+	cout << fibonacci(n) << endl;
+	return 0;
+} 
+
+
+				-----------------------------------------------------------------------
+
+
+F. Alice in the Digital World: https://vjudge.net/contest/555903#problem/F
+
+Ta có một dãy số a gồm N số nguyên dương, số nguyên dương thứ i có giá trị là a[i]
+
+{a1, a2, a3,..., aN}
+
+Cho một số nguyên dương m.
+
+Hãy liệt kê ra tất cả các dãy số mà thỏa mãn m là số nhỏ nhất và là số duy nhất trong dãy đó, hỏi dãy nào có tổng lớn nhất, xuất tổng đó.
+
+N = 20, m = 3
+
+[5, 2, 1, 4, 3, 3, 9, 6, 8, 3, 4, 5, 3, 1, 9, 12, 4, 3, 5, 20] ====> 53  {9, 12, 4, 3, 5, 20}
+                               
+Cách làm: duyệt tìm vị trí của m trong a, rồi từ vị trí của m, xét về bên trái và bên phải của m, nếu a[j] > m thì cộng, không thì break.
+
+
+	Lời giải: 
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+#include <string>
+using namespace std;
+int t;
+int main () { 
+	cin >> t;
+	while (t--) {
+		int n, m;
+		cin >> n >> m;
+		int a[100005];
+		for (int i = 1; i <= n; i++) {
+			cin >> a[i];
+		}
+		int ans = -1;
+		for (int i = 1; i <= n; i++) {
+			if (a[i] == m) {
+				int sum = m;
+				for (int j = i + 1; j <= n; j++) {
+					if (a[j] > m) {
+						sum += a[j];
+					} else {
+						break;
+					}
+				}
+				for (int j = i - 1; j >= 1; j--) {
+					if (a[j] > m) {
+						sum += a[j];
+					} else {
+						break;
+					}
+				}
+				ans = max(ans, sum);
+			}
+		}
+		cout << ans << endl;
+	}
+	return 0;
+} 
+
+				-----------------------------------------------------------------------
+
+E. Equivalent Strings: https://codeforces.com/problemset/problem/559/B
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
