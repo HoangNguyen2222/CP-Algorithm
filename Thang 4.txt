@@ -1,0 +1,247 @@
+Tháng 4: Graph Theory cơ bản
+  + Buổi 1: Introduce to Graph Theory + Dfs algorithm
+  + Buổi 2: Topological Sortings
+  + Buổi 3: Joints And Bridges
+  + Buổi 4: Strongly Connected Component
+  + Buổi 5: Dfs
+  + Buổi 6: Dijikstra 
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Lý thuyết đồ thị
+
+Đồ thị là gì ?????
+
+Đồ thị là một tập hợp các đỉnh và cạnh, trong đó cạnh sẽ nối các đỉnh với nhau thể hiện mối quan hệ giữa 2 đỉnh. Một đỉnh có thể là một trạng thái
+
+và cạnh thể hiện sự tương quan giữa 2 đỉnh với nhau.
+
+Một số khái nhiệm cơ bản ta cần biết: 
+
+1. Đỉnh: Là tập hợp các sự việc - sự vật - trạng thái được minh họa bằng những đỉnh. 
+
+2. Cạnh: Thể hiện mối quan hệ giữa 2 đỉnh trong đồ thị với nhau. 1 cạnh chỉ nối giữa 2 đỉnh
+   + Cạnh vô hướng: Là cạnh khi nối giữa 2 đỉnh u - v thì u có thể đến được v và ngược lại.
+   + Cạnh có hướng: Là cạnh khi nối u -> v thì u có thể đến được v nhưng không có chiều ngược lại. 
+
+3. Đường đi: Là một danh sách các đỉnh x1, x2, x3, ..., xk, trong đó 2 đỉnh kề xi và xi + 1 có cạnh nối trực tiếp với nhau và xi có thể sang xi+1
+
+4. Trọng số: Là một con số được thể hiện trên một cạnh của đồ thị nhằm thể hiện một giá trị nào đó được quy định
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Thuật toán Dfs: 
+
+Bài toán Dfs:
+
+Cho một đồ thị gồm V đỉnh, E cạnh. Cho một đỉnh xuất phát là đỉnh start, hỏi từ đỉnh start có thể đến được những đỉnh nào ???????
+
+Ý tưởng: 
+
+Xuất phát tại đỉnh start, ta xét tất cả các đỉnh có thể đi được. Nếu đỉnh đó chưa được "thăm" thì hãy đến đỉnh đó.
+
+Ban đầu: 
+
+Ta tạo một mảng visited với ý nghĩa: 
+
+visited[u] = true nếu u đã được "thăm", false nếu u chưa được "thăm"
+
+Danh sách kề: 
+
+Hãy tạo ra V cái kho, kho thứ u lưu trữ những đỉnh v kề với u.
+
+khai báo: 
+
+vector <int> adj[100005];
+
+Dòng 1: Gồm 3 số N và M và đỉnh start
+
+M dòng sau, mỗi dòng chứa 2 số u v với ý nghĩa có cạnh nối từ u -> v
+
+Đọc số N và M
+
+for i: 1 -> M
+  đọc u v
+  adj[u].push_back(v); // thêm được cạnh u -> v
+
+
+Thiết kế hàm dfs(u): thể hiện ta đang đứng tại đỉnh u
+
+dfs(u): 
+  visited[u] = true
+  for i: 0 -> (int) adj[u].size(); i++
+     đặt v = adj[u][i] 
+     nếu visited[v] == false
+        dfs(v)
+
+Độ phức tạp: O(V + E)
+
+DfsAlgorithm:
+
+#include <iostream> 
+#include <vector>
+std::vector <int> adj[100005]; 
+int V, E, start;
+bool visited[100005]; 
+
+void dfs(int u) {
+  visited[u] = true;
+  for (int i = 0; i < (int) adj[u].size(); i++) {
+    int v = adj[u][i];
+    if (visited[v] == false) {
+      dfs(v);
+    }
+  }
+}
+
+int main () {
+  std::cin >> V >> E >> start;
+  for (int i = 1; i <= E; i++) {
+    int u, v;
+    std::cin >> u >> v;
+    adj[u].push_back(v);
+  }
+  dfs(start);
+  for (int i = 1; i <= V; i++) {
+    if (visited[i] == true) {
+      std::cout << i << ' ';
+    }
+  }
+  return 0; 
+}
+
+				------------------------------------------------------------------
+
+Couting Rooms: https://cses.fi/problemset/task/1192/
+
+Xem những ô trên bảng như 1 đỉnh của đồ thị
+
+1 ô trên bảng được minh họa bằng 1 cặp tọa độ (x, y)
+
+(x, y) kề với (x', y') khi nào ?????
+
+Khi (x', y') thuộc 1 trong 4 trường hợp sau: 
+
+(x', y') = (x + 1, y)
+           (x, y + 1)
+           (x - 1, y)
+ 	   (x, y - 1)
+
+(x, y) sẽ kề với (x + dx[i], y + dy[i])
+
+i = 0: (x, y) kề với (x, y + 1)
+i = 1: (x, y) kề với (x, y - 1)
+
+
+Gọi visited[x][y] = true nếu ô (x, y) đã thăm, = false trong tình huống ngược lại.
+Viết hàm dfs(x, y): Ta đang đứng tại ô (x, y)
+
+đặt 2 bảng: 
+ dx[4] = {0, 0, 1, -1}
+ dx[4] = {1, -1, 0, 0}
+
+dfs(x, y)
+  visited[x][y] = true
+   for i: 0 -> 3
+      đặt x' = x + dx[i] 
+      đặt y' = y + dy[i]
+      nếu 1 <= x' <= N và 1 <= y' <= M và ô (x', y') == '.' và visited[x'][y'] = false
+        dfs(x',y')
+Trong hàm main():
+  for x: 1 -> n
+     for y: 1 -> m
+       nếu ô(x, y) == '.' và visited[x][y] == false:
+          room++;
+          dfs(x,y)
+
+
+	Giải tay: 
+5 8
+########
+#..#...#
+####.#.#
+#..#...#
+########
+
+===> 3
+
+for i: 1 -> 5
+  for j: 1 -> 8
+     // i = 1, j = 1
+     // i = 1, j = 2
+     // i = 1, j = 3
+               j = 4
+               j = 5
+	       j = 6
+	       j = 7
+	       j = 8
+     // i = 2, j = 1
+     // i =2, j = 2
+       c[2][2] = '.' và visited[2][2] == false
+         room++;	// room = 1
+        dfs(2, 2)
+            vistid[2][2] = true
+              for i: 0 -> 3
+                int X = x + dx[i];
+                int Y = y + dy[i];
+		// i = 0
+                  X = 2
+                  Y = 3
+                  --> vì c[2][3] = '.' và visited[2][3] = false
+                          dfs(2, 3)
+                             for i: 0 -> 3
+                               X = 2
+			       Y = 4
+                              ---> vì c[2][4] != '.'
+                // i = 1
+                  X = 2
+                  Y = 1
+                 --> vì c[2][1] != '.'
+		
+		// i = 2
+                  X = 3
+                  Y = 2
+                 
+
+				------------------------------------------------------------------
+
+Makemaze: https://www.spoj.com/problems/MAKEMAZE/
+
+Cho một mê cung. Một ô(i, j) = '.' nếu ô (i, j) là khoảng trống, = '#' nếu ô (i, j) là tường
+
+Cần kiểm tra mê cung này có hợp lệ hay không ? 
+
+1 mê cung hợp lệ như sau: 
+
+Nếu mê cung này có đúng 1 lối vào và 1 lối ra và từ lối vào có thể thông đến lối ra
+
+Lối vào và lối ra phải nằm trên cạnh của mê cung
+
+
+				------------------------------------------------------------------
+
+Round Trip II: https://cses.fi/problemset/task/1678
+
+Cho một đồ thị có hướng (những cạnh u -> v phải là cạnh có hướng). Một đồ thị DAG (Directed Acyclic Graph) là một đồ thị có hướng và có tồn tại
+
+chu trình. 
+
+Chu trình: Nếu ta xuất phát tại 1 đỉnh u, sau khi đi qua một số đỉnh và có thể quay lại u
+
+Hỏi: Đồ thị đề cho có tồn tại chu trình hay không ? 
+
+Nếu không: In ra No
+
+Nếu có: in ra Yes và xuất 1 chu trình nào đó trong đồ thị.
+
+
+
+
+
+
+
+
+
+
+
