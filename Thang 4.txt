@@ -3,8 +3,10 @@ Tháng 4: Graph Theory cơ bản
   + Buổi 2: Topological Sortings
   + Buổi 3: Joints And Bridges
   + Buổi 4: Strongly Connected Component
-  + Buổi 5: Dfs
-  + Buổi 6: Dijikstra 
+  + Buổi 5: Bfs
+  + Buổi 6: Dijkstra Algorithm
+  + Buổi 7: Disjoint Set Union and Kruskal algorithm
+  + Buổi 8: Contest
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -156,54 +158,66 @@ Trong hàm main():
           dfs(x,y)
 
 
-	Giải tay: 
-5 8
-########
-#..#...#
-####.#.#
-#..#...#
-########
+	Lời giải: 
 
-===> 3
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <vector>
+#include <set>
+#include <deque>
+#include <utility>
+#include <map>
+#include <bitset>
+#pragma GCC target("popcnt")
+#include <stdbool.h>
+#include <fstream>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+#include <string>
+using namespace std;
+bool visited[1006][1006];
+int dx[4] = {0, 0, 1, -1};
+int dy[4] = {1, -1, 0, 0};
+void dfs(int x, int y, char a[1005][1005], int d, int e) {
+	visited[x][y] = true;
+	for (int i = 0; i < 4; i++) {
+		int X = x + dx[i];   // xét các vị trí xung quanh ô (x, y)
+		int Y = y + dy[i];   // xét các vị trí xung quanh ô (x, y)
+		if (X >= 1 && X <= d && Y >= 1 && Y <= e && a[X][Y] == '.' && visited[X][Y] == false) {
+			dfs(X, Y, a, d, e);
+		}
+	}
+}
 
-for i: 1 -> 5
-  for j: 1 -> 8
-     // i = 1, j = 1
-     // i = 1, j = 2
-     // i = 1, j = 3
-               j = 4
-               j = 5
-	       j = 6
-	       j = 7
-	       j = 8
-     // i = 2, j = 1
-     // i =2, j = 2
-       c[2][2] = '.' và visited[2][2] == false
-         room++;	// room = 1
-        dfs(2, 2)
-            vistid[2][2] = true
-              for i: 0 -> 3
-                int X = x + dx[i];
-                int Y = y + dy[i];
-		// i = 0
-                  X = 2
-                  Y = 3
-                  --> vì c[2][3] = '.' và visited[2][3] = false
-                          dfs(2, 3)
-                             for i: 0 -> 3
-                               X = 2
-			       Y = 4
-                              ---> vì c[2][4] != '.'
-                // i = 1
-                  X = 2
-                  Y = 1
-                 --> vì c[2][1] != '.'
-		
-		// i = 2
-                  X = 3
-                  Y = 2
-                 
 
+int main () { 
+	int n, m;
+	cin >> n >> m;
+	char c[1005][1005];
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= m; j++) {
+			cin >> c[i][j];
+		}
+	}
+	int room = 0;
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= m; j++) {
+			if (c[i][j] == '.' && visited[i][j] == false) {
+				room++;
+				dfs(i, j, c, n, m);
+			}
+		}
+	}
+	cout << room << endl;
+	return 0;
+}
+
+
+
+             
 				------------------------------------------------------------------
 
 Makemaze: https://www.spoj.com/problems/MAKEMAZE/
