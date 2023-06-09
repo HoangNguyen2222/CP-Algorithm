@@ -8,7 +8,9 @@ Tháng 4: Graph Theory cơ bản
   + Buổi 7: Disjoint Set Union and Kruskal algorithm
   + Buổi 8: Contest
 
+https://drive.google.com/drive/folders/1nlv28ZO7dPtjAo6gvN6YtXG2u18zkmf4?fbclid=IwAR1x944GFkEXnBnmfCvRBpm4nSXHoiPt7zdKgwZ45Eh5Q--pbs7WK1ScAus
 
+https://drive.google.com/drive/folders/1VpA-M3VRloEarb6n157rNFsmdAuUFip6
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
 Lý thuyết đồ thị
@@ -83,7 +85,7 @@ DfsAlgorithm:
 
 #include <iostream> 
 #include <vector>
-std::vector <int> adj[100005]; 
+std::vector <int> adj[100005]; 		// mảng 1 chiều, mỗi phần tử là 1 vector
 int V, E, start;
 bool visited[100005]; 
 
@@ -231,6 +233,23 @@ Cần kiểm tra mê cung này có hợp lệ hay không ?
 Nếu mê cung này có đúng 1 lối vào và 1 lối ra và từ lối vào có thể thông đến lối ra
 
 Lối vào và lối ra phải nằm trên cạnh của mê cung
+
+########
+#......#
+......##
+#####.##
+#####.##
+#####.##
+
+
+Gọi visited[x][y] = true nếu đã thăm ô (x, y) rồi, = false nếu chưa thăm
+
+tọa độ các đường biên: (1, y: 1->n)
+                       (m, y: 1->n)
+                       (x: 1->m, 1)
+	               (x: 1->m, n)
+
+
 
 
 				------------------------------------------------------------------
