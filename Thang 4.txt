@@ -219,7 +219,6 @@ int main () {
 
 
 
-             
 				------------------------------------------------------------------
 
 Makemaze: https://www.spoj.com/problems/MAKEMAZE/
