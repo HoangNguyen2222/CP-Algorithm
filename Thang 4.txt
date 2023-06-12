@@ -247,7 +247,77 @@ tọa độ các đường biên: (1, y: 1->n)
                        (m, y: 1->n)
                        (x: 1->m, 1)
 	               (x: 1->m, n)
+nếu số '.' trên các đường biên khác 2 ---> cout << "invalid" << endl;
+ 
+nếu số '.' trên các đường biên == 2 thì xét dfs tại 1 điểm rồi xem visited ở điểm còn lại có == true ko 
+   nếu == true --> cout << "valid" << endl;
+    nếu không --> cout << "invalid" << endl;
 
+ 	Lời giải: 
+
+#include <iostream>
+#include <vector>
+#include <utility>
+#include <string>
+using namespace std;
+
+int numTest;
+int m, n;
+char c[22][22];
+bool visited[22][22];
+vector < pair <int, int> > index;
+int dx[4] = {0, 0, 1, -1};
+int dy[4] = {1, -1, 0, 0};
+void dfs (int x, int y) {
+	visited[x][y] = true;
+	for (int i = 0; i < 4; i++) {
+		int X = x + dx[i];
+		int Y = y + dy[i];
+		if (X >= 0 && X < m && Y >= 0 && Y < n && c[X][Y] == '.' && visited[X][Y] == false) {
+			dfs(X, Y);
+		}
+	}
+}
+
+int main() {
+	
+	cin >> numTest;
+	while (numTest--) {
+		cin >> m >> n;
+		index.clear();
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				cin >> c[i][j];
+			}
+		}	
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				visited[i][j] = false;
+			}
+		}
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (i == 0 || i == m - 1 || j == 0 || j == n - 1) {
+					if (c[i][j] == '.') {
+						index.push_back(make_pair(i, j));
+					}
+				}
+			}
+		}
+		if ((int)index.size() != 2) {
+			cout << "invalid" << endl;
+			continue;
+		}
+		dfs(index[0].first, index[0].second);
+		if (visited[index[1].first][index[1].second] == true) {
+			cout << "valid" << endl;
+		} else {
+			cout << "invalid" << endl;
+		}
+	}
+
+	return 0;
+}
 
 
 
