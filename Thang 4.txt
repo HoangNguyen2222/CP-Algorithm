@@ -471,6 +471,68 @@ int main () {
 
 SC5: https://drive.google.com/drive/folders/1GmAttdleRKi7ToLEUpqb8cmmQS6xWjYN
 
+	Lời giải: 
+
+
+#include <iostream>
+#include <vector>
+#include <stdlib.h>
+using namespace std;
+int numTest;
+int n, m;
+string a[25];
+bool visited[22][22][12];
+int dx[4] = {0, 0, 1, -1};
+int dy[4] = {1, -1, 0, 0};
+
+void dfs (int x, int y, int pois) {
+	visited[x][y][pois] = true;
+	for (int i = 0; i < 4; i++) {
+		int X = x + dx[i];
+		int Y = y + dy[i];
+		if (X >= 0 && X < n && Y >= 0 && Y < m && a[X][Y] != '#') {
+			int Pois = pois;
+			if (a[X][Y] >= '1' && a[X][Y] <= '9') {
+				Pois += a[X][Y] - '0';
+			} else if (a[X][Y] == 'S') {
+				Pois = 0;
+			}
+			if (Pois >= 10) {
+				continue;
+			}
+			if (visited[X][Y][Pois] == false) {
+				dfs(X, Y, Pois);
+			}
+		}
+	}
+}
+
+int main () { 	
+	cin >> numTest;
+	for (int TestCase = 1; TestCase <= numTest; TestCase++) {
+		cin >> n >> m;
+		for (int i = 0; i < n; i++) {
+			cin >> a[i];
+		}
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				for (int pois = 0; pois <= 9; pois++) {
+					visited[i][j][pois] = false;
+				}
+			}
+		}
+		dfs(0, 0, 0);
+		bool ans = false;
+		for (int i = 0; i <= 9; i++) {
+			if (visited[n - 1][m - 1][i] == true) {
+				ans = true;
+				break;
+			}
+		}
+		cout << (ans == true ? "possible" : "impossible") << endl; 
+	}	
+	return 0;
+}
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
