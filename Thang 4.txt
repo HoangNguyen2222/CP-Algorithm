@@ -643,9 +643,135 @@ int main () {
 
 					------------------------------------------------------------------
 
+Build a Matrix With Conditions: https://leetcode.com/problems/build-a-matrix-with-conditions/
+
+k = 5
+
+[4, 1, 3, 2, 5] row
+
+[3, 2, 5, 1, 4] col
+
+[0  0  0  0  4
+ 0  0  0  1  0
+ 3  0  0  0  0
+ 0  2  0  0  0
+ 0  0  5  0  0]
+
+	Lời giải: 
+
+class Solution {
+public:
+    bool DAG (int u, vector <int> &state, const vector <vector<int>> &adj) {      //kiem tra co chu trinh hay khong
+        state[u] = 1;
+        for (int i = 0; i < (int)adj[u].size(); i++) {
+            int v = adj[u][i];
+            if (state[v] == 0) {
+                if (DAG(v, state, adj) == true) {
+                    return true;
+                }
+            } else if (state[v] == 1) {
+                return true;
+            }
+        }
+        state[u] = 2;
+        return false;
+    }
+
+    void dfs (int u, vector <bool> &visited, stack <int> &store, const vector <vector <int>> &adj) {  //topo sorting
+        visited[u] = true;
+        for (int i = 0; i < (int)adj[u].size(); i++) {
+            int v = adj[u][i];
+            if (visited[v] == false) {
+                dfs(v, visited, store, adj);
+            } 
+        }
+        store.push(u);
+    }
+
+    vector <int> process(const vector <vector<int>> &adj) {         // nhu la ham main khi code binh thuong
+        vector <int> ret;
+        vector <int> state;
+        vector <bool> visited;
+        stack <int> store;
+        int k = (int)adj.size();
+        state.resize(k, 0);  // khai bao tat ca cac phan tu trong state dang == 0
+        visited.resize(k, false); // khai bao tat ca cac phan tu trong visited dang == false
+        for (int u = 0; u < k; u++) {
+            if (state[u] == 0) {
+                if (DAG(u, state, adj) == true) {  // neu co chu trinh thi dung chuong trinh
+                    return ret;
+                }
+            }
+        }
+
+        for (int u = 0; u < k; u++) {
+            if (visited[u] == false) {
+                dfs(u, visited, store, adj);
+            }
+        }
+
+        while (store.empty() == false) {
+            int u = store.top();
+            store.pop();
+            ret.push_back(u);
+        }
+        return ret;
+    }
+    vector<vector<int>> buildMatrix(int k, vector<vector<int>>& rowConditions, vector<vector<int>>& colConditions) {
+        vector <vector <int>> ans;
+        vector <vector <int>> adj;
+        adj.resize(k);
+        for (int i = 0; i < (int)rowConditions.size(); i++) {
+            int above = rowConditions[i][0] - 1;
+            int below = rowConditions[i][1] - 1;
+            adj[above].push_back(below); // adj[0].push_back[1], adj[2].push_back[1]
+        }
+        vector <int> row = process(adj);
+        if (row.empty() == true) {
+            return ans;
+        } // false --> row = [2, 1, 0]
+        for (int i = 0; i < k; i++) {
+            adj[i].clear();
+        }
+        for (int i = 0; i < (int)colConditions.size(); i++) {
+            int left = colConditions[i][0] - 1;
+            int right = colConditions[i][1] - 1;
+            adj[left].push_back(right);  // adj[1].push_back(0), adj[2].push_back(1)
+        }
+        vector <int> col = process(adj);
+        if (col.empty() == true) {
+            return ans;
+        } // false --> col = [2, 0, 1]
+        for (int i = 0; i < k; i++) {       // gan tat ca cac phan tru trong ans == 0
+            vector <int> v;
+            for (int j = 0; j < k; j++) {
+                v.push_back(0);       
+            }
+            ans.push_back(v);
+        }
+        vector <int> ansRow, ansCol;
+        ansRow.resize(k, 0);
+        ansCol.resize(k, 0);
+        for (int i = 0; i < k; i++) {
+            ansRow[row[i]] = i; // ansRow[2] = 0, ansRow[1] = 1, ansRow[0] = 2
+        }
+        for (int i = 0; i < k; i++) {
+            ansCol[col[i]] = i; //ansCol[2] = 0, ansCol[0] = 1, ansCol[1] = 2
+        }
+        for (int i = 0; i < k; i++) {
+            ans[ansRow[i]][ansCol[i]] = i + 1;  // ans[2][1] = 1, ans[1][2] = 2, ans[0][0] = 3
+        }
+        return ans;
+    }
+};
 
 
-				
+					------------------------------------------------------------------
+
+Longest Path: https://atcoder.jp/contests/dp/tasks/dp_g
+
+
+			
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
 
