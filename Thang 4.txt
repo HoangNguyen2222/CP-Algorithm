@@ -609,7 +609,7 @@ void dfs (int u) {			//topo sortings
 	}
 	schedule.push(u);
 }
-
+  				
 int main () { 	
 	cin >> n >> m;
 	int u, v;
@@ -769,6 +769,108 @@ public:
 					------------------------------------------------------------------
 
 Longest Path: https://atcoder.jp/contests/dp/tasks/dp_g
+
+
+Cho một đồ thị có hướng gồm N đỉnh và M cạnh. Input đề bài bảo đảm đây là đồ thị không có chu trình
+
+Hỏi độ dài đường đi dài nhất là bao nhiêu ??????????
+
+vi du: 
+4 5
+1 2
+1 3
+3 2
+2 4
+3 4
+
+--> 3  (1 3 2 4)
+
+- Gọi f[u] là độ dài đường đi dài nhất khi ta kết thúc tại u
+- Bài toán cơ sở: f[u] = 0
+- Đáp án bài toán: for i: 1 -> n { ans = max(ans, f[i])}
+- Công thức quy hoạch động: Nếu ta có đỉnh v kề với u,  f[u] = max(f[u], f[v] + 1)
+
+Nguyên tắc của quy hoạch động: 
+
+f[lớn] phải tính dựa trên lời giải đã có của f[nhỏ]
+
+
+Ta đưa ra thứ tự topo
+
+Xét i: 1 -> n
+ đặt u = topo[i]
+  duyệt mọi đỉnh v kề với u
+   f[v] = max(f[v], f[u] + 1)
+
+	Lời giải: 
+#include <iostream>
+#include <vector>
+#include <stdlib.h>
+#include <stack>
+using namespace std;
+int n, m;
+int f[100005];
+int visited[100005];
+vector <int> adj[100005];
+stack <int> store;
+
+void dfs(int u) {
+	visited[u] = true;
+	for (int i = 0; i < (int)adj[u].size(); i++) {
+		int v = adj[u][i];
+		if (visited[v] == false) {
+			dfs(v);
+		}
+	}
+	store.push(u);	
+}					// store = {4, 2, 3, 1}
+
+int main () { 	
+	cin >> n >> m;
+	int u, v;
+	for (int i = 1; i <= m; i++) {
+		cin >> u >> v;
+		adj[u].push_back(v);
+	}
+	for (int i = 1; i <= n; i++) {
+		if (visited[i] == false) {
+			dfs(i);
+		}
+	}
+	
+	while (!store.empty()) {
+		int x = store.top();
+		store.pop();
+		for (int j = 0; j < (int)adj[x].size(); j++) {
+			int y = adj[x][j];
+			f[y] = max(f[y], f[x] + 1);
+		}
+	}
+	/*
+	x = 1
+        for j: 0-> adj[1].size
+            adj[1][0] = 2
+            f[2] = max(f[2], f[1] + 1) = 1
+            adj[1][1] = 3
+            f[3] = max(f[3], f[1] + 1) = 1
+	x = 3
+            adj[3][0] = 2
+            f[2] = max(f[2], f[3] + 1) = 2
+            adj[3][1] = 4
+            f[4] = max(f[4], f[3] + 1) = 2
+        x = 2
+            adj[2][0] = 4
+            f[4] = max(f[4], f[2] + 1) = 3
+        x = 4
+	*/
+	int ans = 0;
+	for (int i = 1; i <= n; i++) {
+		ans = max(ans, f[i]);
+	}
+	cout << ans << endl;
+	return 0;
+}
+
 
 
 			
