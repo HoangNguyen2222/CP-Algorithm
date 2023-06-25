@@ -885,7 +885,106 @@ Bài toán đặt ra:
 
 Cho một đồ thị G vô hướng gồm V đỉnh và E cạnh. Hãy xác định những cạnh trên đồ thị được gọi là "cầu" và những đỉnh trên đồ thị được gọi là "khớp"
 
-Một cạnh được gọi là "cầu" 
+Một cạnh được gọi là "cầu" nếu sau khi xóa cạnh này, đồ thị sẽ được chia thành nhiều thành phần liên thông hơn
+
+Một đỉnh được gòi là "khớp" nếu sau khi xóa đỉnh này, đồ thị được sẽ chia thành nhiều thành phần liên thông hơn
+
+
+					--------------------------------------------------------
+
+Thuật toán Tarjan
+
+Ta định nghĩa 2 bảng numb[u] và low[u] với ý nghĩa như sau: 
+
+numb[u] là thứ tự duyệt dfs khi ta đứng tại đỉnh u 
+
+low[u] là giá trị numb nhỏ nhất có thể mà ta có thể đạt được khi đứng tại u
+
+					--------------------------------------------------------
+
+
+ - Ta gọi từ u sang v là "cầu" nếu như numb[v] = low[v]
+ - Ta có từ u sang v nếu u được gọi là "khớp" nếu low[v] >= numb[u] (riêng trường hợp khi u là start phải xét riêng, nếu số lượng đỉnh con của 
+start > 1 thì start sẽ là "khớp")
+
+
+					--------------------------------------------------------	
+
+Graph: https://oj.vnoi.info/problem/graph_
+
+
+	Lời giải 
+#include <iostream> 
+#include <vector>
+#include <math.h>  
+int n, m; 
+std::vector <int> adj[10005]; 
+int low[10005], numb[10005]; 
+bool check[10005];  				// neu check[u] = true thi u la khop
+bool visited[10005]; 
+int timeDFS = 0, bridge = 0; 			// timeDFS la thu tu dfs
+
+void dfs(int u, int father) {
+  int child = 0; 				// child la dinh con
+  low[u] = numb[u] = ++timeDFS; 
+  visited[u] = true; 
+  for (int i = 0; i < (int) adj[u].size(); i++) { 	// duyet cac dinh ke vs u
+    int v = adj[u][i]; 
+    if (v == father) {    				// father la dinh di truoc dinh child
+      continue; 
+    }
+    if (visited[v] == false) {
+      dfs(v, u);    					// sau khi duyet dfs cua dinh v thi se cho ra low[v]     
+      low[u] = std::min(low[u], low[v]); 
+      if (low[v] == numb[v]) {
+        bridge++; 					// so luong cau se duoc tang len neu low[v] = numb[v]
+      }
+      child++; 					// trong qua trinh dfs(v) khi gap 1 dinh v chua duoc tham thi dinh child duoc tang len
+      if (father == -1) { 				// day la tinh huong duyet dinh start
+        if (child > 1) {
+          check[u] = true; 
+        }
+      } // end truong hop duyet dinh start
+      else if (low[v] >= numb[u]) {
+        check[u] = true; 
+      }
+    }
+    else { 					// truong hop dinh v da duoc visited
+      low[u] = std::min(low[u], numb[v]); 
+    }
+  } 						// end duyet cac dinh ke vs u 
+} 					// end dfs
+
+int main () {
+  std::cin >> n >> m; 
+  for (int i = 1; i <= m; i++) {
+    int u, v; 
+    std::cin >> u >> v; 
+    adj[u].push_back(v); 
+    adj[v].push_back(u); 
+  }
+  for (int i = 1; i <= n; i++) {
+    if (visited[i] == false) {
+      dfs(i, -1); 
+    }
+  }
+  int cntJoint = 0; // so luong khop
+  for (int i = 1; i <= n; i++) {
+    if (check[i] == true) {
+      cntJoint++; 
+    }
+  }
+  std::cout << cntJoint << " " << bridge; 
+  return 0; 
+}
+					
+
+					--------------------------------------------------------
+
+
+
+
+
 
 
 
