@@ -1070,10 +1070,126 @@ int main () {
 
 					--------------------------------------------------------
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+				
+							BUỔI 4
+
+				Strongly Connected Component (Thành phần liên thông mạnh)
 
 
 
+Cho một đồ thị có hướng gồm V đỉnh, E cạnh. Một thành phần liên thông mạnh là 1 thành phần gồm tập hợp các đỉnh sao cho với 2 đỉnh u, v bất kì
 
+trong thành phần liên thông đó, chúng có thể đến được với nhau.
+
+Hỏi: Hãy liệt kê các thành phần liên thông mạnh đó.
+
+
+Thuật toán Tarjan (được dùng trên cây DFS)
+
+- Ta gọi numb[u] và low[u] với ý nghĩa: numb[u] là thứ tự duyệt dfs khi ta đứng tại đỉnh u, low[u] là thứ tự duyệt dfs nhỏ nhất trong những đỉnh
+
+mà u có thể đến.
+
+- Ta sử dụng 1 stack để lưu trữ tập hợp những đỉnh mà trong quá trình duyệt dfs. Nếu như đi vào một vùng liên thông mạnh, ta sẽ lấy các đỉnh
+
+trong stack đó và những đỉnh đó là những đỉnh trong thành phần liên thông mạnh.
+
+
+					--------------------------------------------------------
+
+Tìm thành phần liên thông mạnh: https://oj.vnoi.info/problem/tjalg
+
+
+- Gọi deleted[u] = true nếu đỉnh u đã được xóa
+- Gọi store là 1 stack chứa danh sách các đỉnh được lưu: 
+  dfs(u)
+  timeDfs++
+  low[u] = numb[u] = timeDfs
+  store.push(u)
+  for mọi v kề với u: 
+      nếu deleted[v] == false
+         nếu numb[v] == 0
+           dfs(v)
+           low[u] = min(low[u], low[v])
+         else 
+	   low[u] = min(low[u], numb[v])
+ if (numb[u] = low[u]){
+  while (true) {
+    đặt v = store.top();
+    deleted[v] = true;
+    store.pop();
+    nếu u == v: break
+  }
+ }
+
+main () 
+ for u: 1 -> n
+   nếu numb[u] == 0 
+    dfs(u)
+
+
+			Lời giải: 
+
+#include <iostream>
+#include <vector>
+#include <stdlib.h>
+#include <stack>
+using namespace std;
+int n, m;
+vector <int> adj[10005];
+bool deleted[10005];
+int numb[10005], low[10005], timeDfs = 0;
+stack <int> store;
+int countSC = 0;  // dem strongly component
+
+void stronglyComponent (int u) {
+	numb[u] = low[u] = ++timeDfs;
+	store.push(u);
+	for (int i = 0; i < (int) adj[u].size(); i++) {
+		int v = adj[u][i];
+		if (deleted[v] == false) {
+			if (numb[v] == 0) {
+				stronglyComponent(v);
+				low[u] = min(low[u], low[v]);
+			} else {
+				low[u] = min(low[u], numb[v]);
+			}
+		}	
+	}
+	if (numb[u] == low[u]) {
+		countSC++;
+		while (true) {
+			int v = store.top();
+			store.pop();
+			deleted[v] = true;
+			if (u == v) {
+				break;
+			} 
+		}		
+	}
+}
+
+int main () {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	cin >> n >> m;
+	for (int i = 1; i <= m; i++) {
+		int u, v;
+		cin >> u >> v;
+		adj[u].push_back(v);
+	}
+	for (int i = 1; i <= n; i++) {
+		if (numb[i] == 0) {
+			stronglyComponent(i);
+		}
+	}
+	cout << countSC << endl;
+	return 0;
+}	
 
 
 
