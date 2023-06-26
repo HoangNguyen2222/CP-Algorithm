@@ -981,6 +981,96 @@ int main () {
 
 					--------------------------------------------------------
 
+Kbuild: https://oj.vnoi.info/problem/kbuild  (đồ thị dạng cây --> đồ thị vô hướng)
+
+ - 1 cây có N đỉnh thì sẽ có (N - 1) cạnh ---> không tồn tại 1 chu trình
+ - Tất cả các (N - 1) cạnh đều là "cầu" 
+
+
+Ý tưởng bài toán: 
+
+6
+1 2
+2 3
+2 4
+4 5
+4 6
+2
+3 6
+5 6
+--> 1
+
+có 2 ngày sửa cầu, ngày 1 là 3 6, ngày 2 là 5 6 thì ta sẽ nối cạnh từ 3 đến 6 để các cạnh 3 2 4 6 không còn là cầu, làm tương tự như v với 5 6
+
+đáp án bài toán sẽ đếm số cầu trên đồ thị.
+
+	Loi giai:
+#include <iostream>
+#include <vector>
+#include <stdlib.h>
+#include <stack>
+#include <unordered_map>
+using namespace std;
+int n, m;
+vector <int> adj[200005];
+int timeDFS = 0, bridge = 0;
+int low[200005], numb[200005];
+unordered_map <int, bool> mymap[200005];
+
+void countBridge(int u, int father) {
+	numb[u] = low[u] = ++timeDFS;
+	for (int i = 0; i < (int) adj[u].size(); i++) {
+		int v = adj[u][i];
+		if (v == father) {
+			continue;
+		}
+		if (numb[v] == 0) {
+			countBridge(v, u);
+			low[u] = min(low[u], low[v]);
+			if (low[v] == numb[v]) {
+				if (mymap[u][v] == true) {
+					continue;
+				}
+				bridge++;
+			}
+		} else {
+			low[u] = min(low[u], numb[v]);
+		}
+	}
+}
+
+int main () {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	cin >> n;
+	for (int i = 1; i < n; i++) {
+		int u, v;
+		cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);		
+	}
+	cin >> m;
+	for (int i = 1; i <= m; i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+		mymap[a][b] = true;  // nối từ a đến b
+		mymap[b][a] = true;  // nối từ b đến a
+	}
+	
+	countBridge(1, -1);
+	
+	cout << bridge << endl;
+	return 0;
+}
+
+
+					--------------------------------------------------------
+
+
 
 
 
