@@ -35,7 +35,9 @@ Một số khái nhiệm cơ bản ta cần biết:
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
-Thuật toán Dfs: 
+
+						   BUỔI 1
+						Thuật toán Dfs: 
 
 Bài toán Dfs:
 
@@ -879,7 +881,7 @@ int main () {
 
 						BUỔI 3
 
-	Tìm khớp và cầu (Joints And Bridges)
+				Tìm khớp và cầu (Joints And Bridges)
 
 Bài toán đặt ra: 
 
@@ -1190,6 +1192,139 @@ int main () {
 	cout << countSC << endl;
 	return 0;
 }	
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+							BUỔI 5
+
+					Thuật toán BFS (Breadth First Search)
+
+Cho một đồ thị gồm V đỉnh, E cạnh. Cho một đỉnh xuất phát start và 1 đỉnh kết thúc end. Hỏi độ dài đường đi ngắn nhất từ start đến end là bao
+
+nhiêu. Độ dài của 1 đường đi là số lượng cạnh trên đường đi đó. (đồ thị có hướng hay vô hướng đều được)
+
+
+Thuật toán Bfs: 
+
+Tạo mảng dist[u] với ý nghĩa dist[u] là độ dài đường đi ngắn nhất từ start -> u
+
+Ban đầu ta khởi tạo dist[u] = -1, dist[start] = 0
+
+Tạo một hàng đợi Q để lưu trữ những đỉnh đang trong trạng thái được xét.
+
+Khi ta đứng tại 1 đỉnh u, xét các đỉnh kề v, nếu dist[v] == -1 thì ta cập nhật dist[v] = dist[u] + 1 và đưa v vào hàng đợi
+
+Giá trị dist của tất cả các đỉnh là độ dài đường đi ngắn nhất từ đỉnh start đến đỉnh đó. 
+
+
+Mã giả: 
+
+for u: 1 -> n: dist[u] = -1
+Q: hàng đợi
+dist[start] = 0
+đưa start vào hàng đợi
+
+while (Q khác rỗng): 
+  lấy u ra khỏi hàng đợi
+  xét mọi v kề với u
+     nếu dist[v] == -1
+      	dist[v] = dist[u] + 1
+      	đưa v vào hàng đợi.	
+
+Độ phức tạp: O(V + E)
+ 					
+					--------------------------------------------------------
+
+Move: https://oj.vnoi.info/problem/icpc22_mb_b
+
+Cho 2 dãy số có số lượng phần tử bằng nhau là a và b gồm N phần tử.
+
+Cho một con số s ban đầu và một con số M.
+
+Sau mỗi bước thực hiện, ta có thể lấy s và thay đổi s = (s * a[i] + b[i]) % M
+
+Hỏi sau tối thiểu bao nhiêu bước thì s = 0
+
+Nếu không tồn tại bước để biến s thành 0 thì in ra -1
+
+5 2 1 
+a = [2, 3]
+b = [1, 1]
+
+s = 1
+
+1 -> (1 * 2 + 1) % 5 = 3
+
+3 -> (3 * 3 + 1) % 5 = 0
+
+
+	Lời giải: 
+
+#include <iostream>
+#include <utility>
+#include <vector>
+#include <queue>
+using namespace std;
+int m, n, s0;
+int dist[100000005];
+queue <int> myqueue;
+int a[13], b[12];
+
+void bfs(int start) {
+	for (int u = 0; u < m; u++) {
+		dist[u] = -1;
+	}
+	dist[start] = 0;
+	myqueue.push(start);
+	while (!myqueue.empty()) {
+		int u = myqueue.front();
+		myqueue.pop();
+		for (int i = 1; i <= n; i++) {
+			long long v = (1LL * u * a[i] + b[i]) % m;   // yêu cầu đề bài
+			if (dist[v] == -1) {
+				dist[v] = dist[u] + 1;
+				myqueue.push(v);
+			}
+		}
+	}
+}
+
+int main () {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	cin >> m >> n >> s0;
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i] >> b[i];
+	}
+	
+	bfs(s0);
+	
+	cout << dist[0] << endl;
+	
+	return 0;
+}
+
+					--------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+						
+
+							BUỔI 6
+
+
+
+
+
+
+
+
+
+
+
 
 
 
