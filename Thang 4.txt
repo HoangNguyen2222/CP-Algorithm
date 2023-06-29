@@ -1309,14 +1309,152 @@ int main () {
 }
 
 					--------------------------------------------------------
+
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
 						
 
 							BUỔI 6
 
+					         Dijkstra Algorithm
+
+Xét 1 đồ thị có hướng và có trọng số không âm G(V, E). Một cạnh từ u -> v có trọng số không âm w. Cho một đỉnh start, hỏi độ dài đường đi ngắn
+
+nhất từ start đến tất cả các đỉnh còn lại.
+
+Độ dài của một đường đi = tổng trọng số của các cạnh trên đường đi đó. (đồ thị có hướng hay vô hướng đều dùng được)
 
 
+- Sử dụng ý tưởng tham lam (Greedy):
+
+Với một đỉnh u (đã tìm được đường đi tối ưu từ start -> u). Xét mọi v kề với u, nếu đường đi đến v có thể được tối ưu dựa vô đường đi tới u thì ta
+
+cập nhật
+
+- Gọi dist[u] là độ dài đường đi ngắn nhất từ start đến u.
+
+- Ta khởi tạo dist[u] = inf cho mọi u 
+
+- Tạo một hàng đợi ưu tiên, mỗi phần tử là một cặp <distance, u> với ý nghĩa: Độ dài đường đi ngắn nhất đến u là distance
+
+- Khi lấy u ra khỏi hàng đợi ưu tiên, xét mọi v kề với u. Nếu dist[v] > dist[u] + w(u, v) thì ta cập nhật dist[v] = dist[u] + w(u, v)
+  và đưa cặp <dist[v], v> vào hàng đợi ưu tiên.
+- Thực hiện đến khi hàng đợi ưu tiên rỗng.
+
+Demo Dijkstra Algorithm: 
+
+
+#include <iostream>
+#include <utility>
+#include <vector>
+#include <queue>
+#include <functional>
+using namespace std;
+const long long inf = 100000007LL;
+long long dist[100005];
+vector <pair <int, int>> adj[100005];
+priority_queue <pair <long long, int>, vector <pair <long long, int> >, greater <pair <long long, int> > > pq;
+int n, m, start;
+
+void dijkstra (const int &start) {
+	for (int i = 1; i <= n; i++) {
+		dist[i] = inf;
+	}
+	dist[start] = 0;
+	pq.push(make_pair(0, start));
+	while (!pq.empty()) {
+		pair <long long, int> element = pq.top();
+		pq.pop();
+		int u = element.second;
+		long long distance = element.first;
+		if (dist[u] != distance) {
+			continue;
+		}
+		for (int i = 0; i < (int)adj[u].size(); i++) {
+			pair <int, int> neighbor = adj[u][i];
+			if (dist[neighbor.first] > dist[u] + neighbor.second) {
+				dist[neighbor.first] = dist[u] + neighbor.second;
+				pq.push(make_pair(dist[neighbor.fist], neighbor.first));
+			}
+		}
+	}
+}
+
+int main () {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	cin >> n >> m >> start;
+	for (int i = 1; i <= m; i++) {
+		int u, v, weight;
+		adj[u].push_back(make_pair(v, weight));
+	}
+	dijkstra(start);
+	return 0;
+}
+
+					--------------------------------------------------------
+
+Shortest Routes I: https://cses.fi/problemset/task/1671
+
+	Lời giải: 
+
+#include <iostream>
+#include <utility>
+#include <vector>
+#include <functional>
+#include <queue>
+using namespace std;
+int n, m;
+const long long inf = 1000000000000007LL;
+vector <pair <int, int> > adj[200005];
+long long dist[100005];
+priority_queue <pair <long long, int>, vector <pair <long long, int> >, greater <pair <long long, int> > > pq;
+
+void dijkstra(const int start) {
+	for (int i = 1; i <= n; i++) {
+		dist[i] = inf;
+	}
+	dist[start] = 0;
+	pq.push(make_pair(dist[start], start));
+	while (!pq.empty()) {
+		pair <long long, int> element = pq.top();
+		pq.pop();
+		int u = element.second;
+		long long distance = element.first;
+		if (dist[u] != distance) {
+			continue;
+		}
+		for (int i = 0; i < (int)adj[u].size(); i++) {
+			pair <int, int> neighbor = adj[u][i];
+			if (dist[neighbor.first] > dist[u] + neighbor.second) {
+				dist[neighbor.first] = dist[u] + neighbor.second;
+				pq.push(make_pair(dist[neighbor.first], neighbor.first));
+			}
+		}
+	}
+}
+
+int main () {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	cin >> n >> m;
+	for (int i = 1; i <= m; i++) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		adj[a].push_back(make_pair(b, c));
+	}	
+	dijkstra(1);
+	for (int i = 1; i <= n; i++) {
+		cout << dist[i] << ' ';
+	}
+	return 0;
+}
+
+					--------------------------------------------------------
 
 
 
