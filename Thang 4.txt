@@ -1639,6 +1639,23 @@ int main () {
 
 
 
+Buggy Robot:
+
+Trên một bảng hình chữ nhật N hàng M cột. Có một con rô bốt xuất phát tại một vị trí (startx, starty) và rô bốt sẽ muốn di chuyển đến vị trí 
+
+(Endx, endy) 
+
+Có một số chướng ngại vật trên bảng
+
+Lập trình viên đã lập trình sẵn cho rô bốt một dãy lệnh gồm C câu, mỗi lệnh là 1 trong 4 lệnh 'U', 'D', 'L', 'R' tương ứng lên trên, xuống dưới
+Sang phải, sang trái
+
+Rô bốt sẽ thực hieinej theo đúng dãy lệnh đã cho với nguyên tắc:
+
++ Nếu sau một lệnh, rô bốt ra khỏi bảng hoặc bước vào ô có chướng ngại vật thì rô bốt không thực hiện lệnh đó
+
+Ta có quyền xóa một vài câu lệnh hoặc thêm một vài câu lệnh. Hỏi ta có thể chỉnh sửa ít nhất bao nhiêu câu để rô bốt có thể đến được đích ? 
+
 
 
 
