@@ -1660,6 +1660,10 @@ Nhận xét: 1 <= N, M <= 50, 1 <= C <= 50
 Các thùng nước (IOIBIN): https://oj.vnoi.info/problem/ioibin
 
 
+LƯU Ý: DSU chỉ sử dụng trên đồ thị vô hướng.
+
+
+
 Do ban đầu tất cả các đỉnh đều chưa nối với nhau cho nên N đỉnh là N thành phần liên thông
 
 Mỗi đỉnh u là đỉnh đại diện cho thành phần liên thông của nó. 
@@ -1768,6 +1772,22 @@ int main () {
 
 					
 					--------------------------------------------------------
+
+Anansi 's Cobweb: https://acm.timus.ru/problem.aspx?space=1&num=1671
+
+
+		Your JUDGE_ID: 362268WR
+		You will need this code to submit solutions.
+
+
+
+
+
+
+
+
+
+
 
 
 
