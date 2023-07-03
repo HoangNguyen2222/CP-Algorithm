@@ -1657,6 +1657,118 @@ Nhận xét: 1 <= N, M <= 50, 1 <= C <= 50
 				      Disjoint Set Union and Kruskal algorithm
 
 
+Các thùng nước (IOIBIN): https://oj.vnoi.info/problem/ioibin
+
+
+Do ban đầu tất cả các đỉnh đều chưa nối với nhau cho nên N đỉnh là N thành phần liên thông
+
+Mỗi đỉnh u là đỉnh đại diện cho thành phần liên thông của nó. 
+
+Gọi root[u] là mảng với ý nghĩa root[u] là đỉnh đại diện "tạm thời" cho thành phần liên thông có chưa đỉnh u.
+
+Ta thiết kế hàm findRoot(u) với ý nghĩa: findRoot(u) trả về đỉnh đại diện TỐI THƯỢNG cho thành phần liên thông có chứa u.
+
+Nguyên tắc: Khi 2 đỉnh u và v có cùng đỉnh đại diện TỐI THƯỢNG thì chúng liên thông với nhau.
+
+
+Thiết kế hàm findRoot(u):
+
+  int findRoot(int u) {
+	if (u == root[u]) {
+	    return u;
+	} else {
+	    root[u] = findRoot(root[u]);
+	    return root[u];
+	}
+		
+   }
+
+Bool check(int u, int v) {
+   Int rootu = findRoot(u);
+   Int rootv = findRoot(v);
+   if (rootu != rootv) {
+      Cout << "NO";
+   } else {
+      Cout << "Yes";
+   }
+}
+
+Void unionSet(int u, int v) {
+  Int rootu = findRoot(u);
+  Int rootv = findRoot(v);
+
+  If (rootu != rootv) {
+     root[rootu] = rootv;
+  }
+}
+
+
+main () {
+  For I: 1 -> n
+    root[I] = I;
+}
+
+		
+		Lời giải: 
+
+#include <iostream>
+using namespace std;
+const int n = 10000;
+int p;
+int root[50005];
+
+int findRoot(int u) {
+    if (u == root[u]) {
+        return u;
+    } else {
+        root[u] = findRoot(root[u]);
+        return root[u];
+    }
+}
+
+int check(int u, int v) {
+    int rootu = findRoot(u);
+    int rootv = findRoot(v);
+    if (rootu != rootv) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+void unionSet(int u, int v) {
+    int rootu = findRoot(u);
+    int rootv = findRoot(v);
+    if (rootu != rootv) {
+        root[root[u]] = rootv;
+    }
+}
+
+int main () {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    cin >> p;
+    for (int j = 1; j <= n; j++) {
+        root[j] = j;
+    }
+    for (int i = 1; i <= p; i++) {
+        int x, y, z;
+        cin >> x >> y >> z;
+        if (z == 1) {
+            unionSet(x, y);
+        } else {
+            cout << check(x, y) << endl;
+        }
+    }
+    return 0;
+}
+			
+
+					
+					--------------------------------------------------------
+
 
 
 
