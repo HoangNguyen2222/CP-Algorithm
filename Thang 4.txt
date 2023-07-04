@@ -1779,7 +1779,90 @@ Anansi 's Cobweb: https://acm.timus.ru/problem.aspx?space=1&num=1671
 		Your JUDGE_ID: 362268WR
 		You will need this code to submit solutions.
 
+	Lời giải:
 
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int n, m;
+int root[100005];
+bool mark[100005];
+
+struct edge {
+	int u, v;
+};
+
+vector <edge> listEdge;
+
+int findRoot(int u) {
+	if (u == root[u]) {
+		return u;
+	} else {
+		root[u] = findRoot(root[u]);
+		return root[u];
+	}
+}
+
+int main () {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++) {
+		root[i] = i;
+	}
+	
+	for (int i = 1; i <= m; i++) {
+		int u, v;
+		cin >> u >> v;
+		listEdge.push_back((edge) {u, v});
+	}
+	int Q;
+	cin >> Q;
+	vector <int> listQ;
+	for (int i = 1; i <= Q; i++) {
+		int query;
+		cin >> query;
+		mark[query - 1] = true;
+		listQ.push_back(query);
+	}
+	int cntWeb = n;
+	vector <int> res;
+	for (int i = 0; i < m; i++) {
+		if (mark[i] == false) {
+			int u = listEdge[i].u;
+			int v = listEdge[i].v;
+			int rootu = findRoot(u);
+			int rootv = findRoot(v);
+			if (rootu != rootv) {
+				cntWeb--;
+				root[root[u]]= rootv;
+			}
+		}
+	}
+	for (int i = Q - 1; i >= 0; i--) {
+		edge e = listEdge[listQ[i] - 1];
+		res.push_back(cntWeb);
+		int u = e.u;
+		int v = e.v;
+		int rootu = findRoot(u);
+		int rootv = findRoot(v);
+		if (rootu != rootv) {
+			cntWeb--;
+			root[root[u]] = rootv;
+		}
+	}
+	for (int i = Q - 1; i >= 0; i--) {
+		cout << res[i] << ' ';
+	}
+	return 0;
+} 
+
+			
+
+					--------------------------------------------------------
 
 
 
