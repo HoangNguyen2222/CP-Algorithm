@@ -1,0 +1,256 @@
+
+Tháng 5: Toán
+
+Buổi 1: Combinatorics
+Buổi 2: Luyện tập về tổ hợp
+Buổi 3: Quy hoạch động + Tổ hợp
+Buổi 4: Xác suất
+Buổi 5: Kỳ vọng
+Buổi 6: Lý thuyết trò chơi và giải quyết bằng quy hoạch động
+Buổi 7: Một số phương pháp chứng minh toán học
+BUổi 8: Contest
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+				
+							BUỔI 1
+						Combinatorics
+
+Tổ hợp là gì ????
+
+Tổ hợp là một mảng lớn trong toán học. Những bài toán về tổ hợp là những bài toán liên quan đến phép đếm về số trạng thái / số cấu hình của một
+
+sự vật / sự việc nào đó.
+
+2 phép toán trong tổ hợp: 
+
+	+ phép cộng:
+		
+		Để giải quyết một công việc P, ta có k phương án ĐỘC LẬP khác nhau
+		
+		Phương án 1: Có P1 cách giải quyết
+
+		Phương án 2: Có P2 cách giải quyết
+
+		.........
+
+		Phương án k: Có Pk cách giải quyết	
+
+	====> Só cách để hoàn thành công việc P: P1 + P2 + ... + Pk
+
+	+ phép nhân
+		
+		Để giải quyết một công việc P, nếu công việc P có thể chia ra thành k giai đoạn độc lập và phải thực hiện một cách tuần tự
+
+		Giai đoạn 1: Có P1 cách giải quyết
+
+		Giai đoạn 2: Có P2 cách giải quyết
+
+		.............
+
+		Giai đoạn k: Có Pk cách giải quyết
+
+	====> Số cách để thực hiện công việc P: P1 * P2 * P3 ...... * Pk
+
+
+Xét bài toán đi từ nhà -> trường
+
+
+Ta có 3 phương án để đi từ nhà -> trường
+
+Phương án 1: Đi trực tiếp, có 1 cách
+
+Phương án 2: Đi sang nhà bà 2, sau đó đến trường
+
+	Từ nhà -> nhà bà 2: Có 2 cách
+
+	Từ nhà bà 2 -> trường: Có 3 cách
+
+      ========> Số cách đi từ nhà -> nhà bà 2 -> trường: 2 * 3 = 6 cách
+
+Phương án 3: Đi sang nhà bà 7 -> bà 8 -> bà 9 -> trường
+
+	Nhà -> nhà bà 7: 1 cách
+
+	Nhà bà 7 -> nhà bà 8: 3 cách
+
+	Nhà bà 8 -> nhà bà 9: 2 cách
+	
+	Nhà bà 9 -> trường: 2 cách
+
+      =======> Số cách đi từ nhà -> nhà bà 7 -> nhà bà 8 -> nhà bà 9 -> trường: 1 * 3 * 2 * 2 = 12 cách
+
+
+=====> Tổng số cách: 12 + 6 + 1 = 19 cách
+
+
+
+
+* 		Hoán vị: 
+
+Cho N số tự nhiên từ 1 -> N, hỏi có bao nhiêu cách tạo ra một dãy số a gồm N số trên (không có số nào được sử dụng nhiều hơn 1 lần)
+
+
+N = 3
+[1, 2, 3]
+[1, 3, 2]
+[2, 1, 3]
+[2, 3, 1]
+[3, 1, 2]
+[3, 2, 1]
+
+A = [?, ?, ?, ?, ?, ......, ?]
+
+a[1]: N cách điền ({1, 2, 3, ...., N})
+
+a[2]: N - 1 cách điền
+
+a[3]: N - 2 cách điền
+
+...
+
+aN: 1 cách điền
+
+======> Số cách điền vô N dấu ?: 1 * 2 * 3 *.....* N = N! (N giai thừa)
+
+
+*		Chỉnh hợp:
+
+Cho N số tự nhiên từ 1 -> N, hỏi có bao nhiêu cách tạo 1 dãy số a gồm K số trong N số đã cho
+
+N = 4, K = 3
+
+[1, 2, 3]
+[1, 3, 2]
+[2, 1, 3]
+[2, 3, 1]
+[3, 1, 2]
+[3, 2, 1]
+
+
+[1, 3, 4]
+[1, 4, 3]
+[3, 1, 4]
+........
+
+Giả sử dãy số a = [?, ?, ?, ?....?] (gồm K dấu ?)
+
+A[1]: N cách điền
+
+a[2]: N - 1 cách điền
+
+a[3]: N - 2 cách điền
+
+...
+
+a[k]: N - k + 1 cách điền
+
+Số cách điền các số trong dãy a: N * (N - 1) * (N - 2) * .... * (N - k + 1)
+
+a(N, k) = N * (N - 1) * (N - 2) * .... * (N - k + 1)
+
+	= N! / (N - k)!
+
+
+
+*		Tổ hợp
+
+Cho N số tự nhiên từ 1 -> N. Đếm có bao nhiêu "TẬP HỢP" gồm K phần tử được chọn từ N phần tử đã cho.
+
+[1, 2, 3]
+[1, 3, 2]
+[2, 1, 3]
+[2, 3, 1]
+[3, 1, 2]
+[3, 2, 1] 
+
+{1, 2, 3} giống {1, 3, 2} giống {2, 1, 3}, ....
+
+	
+
+	C(n, k) = A(n, k) / k! = N! / ((N - k)! * k!) 
+
+
+					------------------------------------------------------------
+
+
+Balls in berland
+
+Có N bạn trai và M bạn gái cùng tham gia một lễ hội khiêu vũ.
+
+Có K cặp đôi thích nhảy với nhau, cặp thứ i gồm một bạn nam - một bạn nữ
+
+Ta cần chọn ra 2 cặp để có thể cùng tham gia lễ hội
+
+Hỏi có bao nhiêu cách chọn ra 2 cặp. Lưu ý: Nếu một bạn nam đã được chọn trong 1 cặp thì bạn đó không được xuất hiện trong cặp còn lại. Tương tự
+
+với bạn nữ.
+
+
+N = 5, M = 6
+
+K = 5
+
+1 1
+1 4
+2 1
+3 6
+5 4
+
+Thuật ngây thơ
+
+For I: 2 -> k
+   For j: 1 - > I - 1
+      nếu a[I].boy != a[j].boy và a[i].girl != a[j].girl
+          ans++;
+
+Độ phức tạp: O(K^2)
+
+
+Gọi countBoys[x]: số lượng cặp có bạn nam là x TÍNH ĐẾN THỜI ĐIỂM HIỆN TẠI
+Gọi countGirl[x]: số lượng cặp có bạn nữ là x TÍNH ĐẾN THỜI ĐIỂM HIỆN TẠI
+
+
+					------------------------------------------------------------
+Ski Resort
+
+Có N ngày nghỉ, ngày nghỉ thứ i có nhiệt độ là a[i]. Cơ thể của chúng ta không thể chịu nổi nếu nhiệt độ lớn hơn Q. Ta sẽ chọn một dãy LIÊN TỤC 
+
+các ngày nghỉ sao cho: 
+
+. Có TỐI THIỂU k ngày nghỉ
+. Nhiệt độ của những ngày được chọn <= Q
+
+Hỏi: Có bao nhiêu cách chọn
+
+N = 10, K = 2, Q = 37 
+
+A = [29, 30, 50, 0, 2, -5, 29, 40]
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
