@@ -174,7 +174,7 @@ Cho N số tự nhiên từ 1 -> N. Đếm có bao nhiêu "TẬP HỢP" gồm K 
 					------------------------------------------------------------
 
 
-Balls in berland
+Balls in berland: https://codeforces.com/problemset/problem/1475/C
 
 Có N bạn trai và M bạn gái cùng tham gia một lễ hội khiêu vũ.
 
@@ -210,9 +210,79 @@ For I: 2 -> k
 Gọi countBoys[x]: số lượng cặp có bạn nam là x TÍNH ĐẾN THỜI ĐIỂM HIỆN TẠI
 Gọi countGirl[x]: số lượng cặp có bạn nữ là x TÍNH ĐẾN THỜI ĐIỂM HIỆN TẠI
 
+ans = 0
+for i: 1 -> k
+   ans += i - 1 - countBoys[a[i].boy] - countGirls[a[i].girl]
+   countBoys[a[i].boy]++
+   countGirls[a[i].girl]++
+
+	Lời giải: 
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int numTest;
+int boys[200005];
+int girls[200005];
+int countBoys[200005];
+int countGirls[200005];
+
+int main () {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	
+	cin >> numTest;
+	while (numTest--) {
+		int a, b, k;
+		cin >> a >> b >> k;
+		for (int i = 1; i <= k; i++) {
+			cin >> boys[i];
+		}
+		for (int i = 1; i <= k; i++) {
+			cin >> girls[i];
+		}
+		long long ans = 0;
+		for (int i = 1; i <= k; i++) {
+			ans += i - 1 - countBoys[boys[i]] - countGirls[girls[i]];
+			countBoys[boys[i]]++;
+			countGirls[girls[i]]++;
+		}
+		cout << ans << endl;
+		memset(countBoys, 0, sizeof(countBoys));
+		memset(countGirls, 0, sizeof(countGirls));
+	}
+	return 0;
+}
+
+
+	Giải tay: 
+Input:  3 4 4
+	1 1 2 3
+	2 3 2 4
+Output: 4
+
+for i: 1 -> k
+  // i = 1, boys[1] = 1, girls[1] = 2
+  	ans += i - 1 - countBoys[1] - countGirls[2] = 0
+	countBoys[1]++;
+	countGirls[2]++;
+  // i = 2, boys[2] = 1, girls[2] = 3
+	ans += 2 - 1 - countBoys[1] - countGirls[3] = 0
+	countBoys[1] = 2
+	countGirls[3] = 1
+  // i = 3, boys[3] = 2, girls[3] = 2
+	ans += 3 - 1 - countBoys[2] - countGirls[2] = 1
+	countBoys[2] = 1
+	countGirls[2] = 2
+  // i = 4, boys[4] = 3, girls[4] = 4
+	ans += 4 - 1 - countBoys[3] - countGirls[4] = 4
+
+===> ans = 4
+
 
 					------------------------------------------------------------
-Ski Resort
+Ski Resort: 
 
 Có N ngày nghỉ, ngày nghỉ thứ i có nhiệt độ là a[i]. Cơ thể của chúng ta không thể chịu nổi nếu nhiệt độ lớn hơn Q. Ta sẽ chọn một dãy LIÊN TỤC 
 
